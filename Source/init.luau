@@ -1,6 +1,8 @@
 local SingletonManager = require(script.Core.SingletonManager)
 local LifecycleManager = require(script.Core.LifecycleManager)
 
+local Networking = require(script.Networking)
+
 return {
 	Service = SingletonManager.Create,
 	Controller = SingletonManager.Create,
@@ -27,5 +29,10 @@ return {
 			local onStart = LifecycleManager.Create("OnStart")
 			onStart.Dispatch() -- Make this parallel
 		end,
+	},
+
+	Networking = {
+		ServerToClientEventReciever = Networking.ServerToClientReciever,
+		ServerToClientEventSender = Networking.ServerToClientSender,
 	},
 }

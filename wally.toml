@@ -12,3 +12,6 @@ registry = "https://github.com/upliftgames/wally-index"
 exclude = ["**"]
 include = ["default.project.json", "Source", "Source/**", "LICENSE", "wally.toml"]
 private = true
+
+[dependencies]
+Promise = "evaera/promise@4.0.0"
