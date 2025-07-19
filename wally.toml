@@ -1,0 +1,14 @@
+[package]
+name = "its-a-bit-random/toasty"
+description = "Game framework"
+version = "1.0.0"
+
+license = "MIT"
+authors = ["Sebastian2852"]
+
+realm = "shared"
+registry = "https://github.com/upliftgames/wally-index"
+
+exclude = ["**"]
+include = ["default.project.json", "Source", "Source/**", "LICENSE", "wally.toml"]
+private = true
