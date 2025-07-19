@@ -23,11 +23,21 @@ return {
 		end,
 
 		Toast = function()
-			local onInit = LifecycleManager.Create("OnInit")
-			onInit.Dispatch() -- Make this blocking
+			local onInit = LifecycleManager.Create("OnInit", function(singletons, name: string, ...: any)
+				for _, v in singletons do
+					local func = v[name]
+					func(v, ...)
+				end
+			end)
+			onInit.Dispatch()
 
-			local onStart = LifecycleManager.Create("OnStart")
-			onStart.Dispatch() -- Make this parallel
+			local onStart = LifecycleManager.Create("OnStart", function(singletons, name: string, ...: any)
+				for _, v in singletons do
+					local func = v[name]
+					task.spawn(func, v, ...)
+				end
+			end)
+			onStart.Dispatch()
 		end,
 	},
 
