@@ -3,6 +3,7 @@ local LifecycleManager = require(script.LifecycleManager)
 
 return {
 	Service = SingletonManager.Create,
+	Controller = SingletonManager.Create,
 
 	Lifecycle = {
 		Create = LifecycleManager.Create,

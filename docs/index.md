@@ -1,9 +1,3 @@
 # Toasty Docs
 
-🏗️ Under Construction
-
-```lua
-local x = 5
-x += 1
-print(x)
-```
+Simple lightweight Luau game framework inspired by Flamework for Roblox-TS and intended to be used in place of Knit for new projects.
