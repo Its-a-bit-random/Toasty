@@ -29,7 +29,7 @@ return {
 					func(v, ...)
 				end
 			end)
-			onInit.Dispatch()
+			onInit:Dispatch()
 
 			local onStart = LifecycleManager.Create("OnStart", function(singletons, name: string, ...: any)
 				for _, v in singletons do
@@ -37,7 +37,7 @@ return {
 					task.spawn(func, v, ...)
 				end
 			end)
-			onStart.Dispatch()
+			onStart:Dispatch()
 		end,
 	},
 

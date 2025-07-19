@@ -6,9 +6,13 @@ export type SingletonOptions = {
 	Implements: { string },
 }
 
+export type LifecycleHandler = (singletons: { Singleton }, name: string, ...any) -> ()
 export type Lifecycle = {
 	Name: string,
-	Dispatch: (...any) -> (),
+	Dispatch: (self: Lifecycle, ...any) -> (),
+
+	_ClassName: string,
+	_OnDispatch: LifecycleHandler,
 }
 
 return nil
