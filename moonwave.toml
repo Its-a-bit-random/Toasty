@@ -18,9 +18,9 @@ classes = [
 [[classOrder]]
 section = "Networking"
 classes = [
-	"ServerEventReciever",
+	"ServerEventReceiver",
 	"ServerEventSender",
-	"ClientEventReciever",
+	"ClientEventReceiver",
 	"ClientEventSender"
 ]
 

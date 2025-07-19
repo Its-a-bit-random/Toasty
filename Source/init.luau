@@ -59,10 +59,10 @@ local LifecycleManager = require(script.Core.LifecycleManager)
 ]=]
 
 --[=[
-	@function Networking.ServerEventReciever
+	@function Networking.ServerEventReceiver
 	@param name string
 	@param unreliable boolean
-	@return ServerEventReciever
+	@return ServerEventReceiver
 	@within Toasty
 ]=]
 
@@ -75,10 +75,10 @@ local LifecycleManager = require(script.Core.LifecycleManager)
 ]=]
 
 --[=[
-	@function Networking.ClientEventReciever
+	@function Networking.ClientEventReceiver
 	@param name string
 	@param unreliable boolean
-	@return ClientEventReciever
+	@return ClientEventReceiver
 	@within Toasty
 ]=]
 
@@ -122,9 +122,9 @@ return {
 
 	Networking = {
 		ServerEventSender = require(script.Networking.Event.Server).EventSender.new,
-		ServerEventReciever = require(script.Networking.Event.Server).EventReciever.new,
+		ServerEventReceiver = require(script.Networking.Event.Server).EventReceiver.new,
 
 		ClientEventSender = require(script.Networking.Event.Client).EventSender.new,
-		ClientEventReciever = require(script.Networking.Event.Client).EventReciever.new,
+		ClientEventReceiver = require(script.Networking.Event.Client).EventReceiver.new,
 	},
 }

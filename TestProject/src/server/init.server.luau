@@ -4,7 +4,7 @@ Toasty.Bootstrap.LoadModules(script.Services, true)
 Toasty.Bootstrap.Toast()
 
 local event = Toasty.Networking.ServerEventSender("John", false)
-local clientEvent = Toasty.Networking.ServerEventReciever("JohnClient", false)
+local clientEvent = Toasty.Networking.ServerEventReceiver("JohnClient", false)
 
 clientEvent:SetCallback(function(player: Player, ...: any)
 	print(player, ...)

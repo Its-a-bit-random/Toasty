@@ -34,11 +34,11 @@ export type Lifecycle = {
 	_OnDispatch: LifecycleHandler,
 }
 
-export type ServerEventReciever = {
+export type ServerEventReceiver = {
 	Name: string,
 	Event: RemoteEvent | UnreliableRemoteEvent,
 
-	SetCallback: (self: ServerEventReciever, callback: (player: Player, ...any) -> ()) -> (),
+	SetCallback: (self: ServerEventReceiver, callback: (player: Player, ...any) -> ()) -> (),
 }
 
 export type ServerEventSender = {
@@ -48,11 +48,11 @@ export type ServerEventSender = {
 	Fire: (self: ServerEventSender, player: Player, ...any) -> (),
 }
 
-export type ClientEventReciever = {
+export type ClientEventReceiver = {
 	Name: string,
 	Event: RemoteEvent | UnreliableRemoteEvent,
 
-	SetCallback: (self: ServerEventReciever, callback: (player: Player, ...any) -> ()) -> (),
+	SetCallback: (self: ServerEventReceiver, callback: (player: Player, ...any) -> ()) -> (),
 }
 
 export type ClientEventSender = {

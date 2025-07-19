@@ -5,22 +5,23 @@ local Types = require(Core.Types)
 local InstanceManager = require(Networking.InstanceManager)
 
 --[=[
-	@class ClientEventReciever
+	@class ClientEventReceiver
+	@client
 ]=]
-local ClientEventReciever = {}
-ClientEventReciever.__index = ClientEventReciever
+local ClientEventReceiver = {}
+ClientEventReceiver.__index = ClientEventReceiver
 
 --[=[
 	@function new
-	@within ClientEventReciever
+	@within ClientEventReceiver
 	@param name string
 	@param unreliable boolean
-	@return ClientEventReciever
+	@return ClientEventReceiver
 
-	Create a new server event reciever
+	Create a new client event Receiver
 ]=]
-function ClientEventReciever.new(name: string, unreliable: boolean)
-	local self = setmetatable({}, ClientEventReciever)
+function ClientEventReceiver.new(name: string, unreliable: boolean)
+	local self = setmetatable({}, ClientEventReceiver)
 
 	self.Name = if unreliable then "URE/" .. name else "RE/" .. name
 	self.Event = InstanceManager.EventsFolder:WaitForChild(self.Name, 10)
@@ -31,13 +32,13 @@ end
 
 --[=[
 	@method SetCallback
-	@within ClientEventReciever
-	@param name callback (...any) -> ()
+	@within ClientEventReceiver
+	@param callback (...any) -> ()
 	@return RBXScriptConnection
 
-	Create a new server event reciever
+	Sets the function that will run when the event is fired from the server
 ]=]
-function ClientEventReciever.SetCallback(self: Types.ClientEventReciever, callback: (...any) -> ())
+function ClientEventReceiver.SetCallback(self: Types.ClientEventReceiver, callback: (...any) -> ())
 	local event = self.Event :: RemoteEvent
 	return event.OnClientEvent:Connect(callback)
 end
@@ -46,6 +47,7 @@ end
 
 --[=[
 	@class ClientEventSender
+	@client
 ]=]
 local ClientEventSender = {}
 ClientEventSender.__index = ClientEventSender
@@ -57,7 +59,7 @@ ClientEventSender.__index = ClientEventSender
 	@param unreliable boolean
 	@return ClientEventSender
 
-	Create a new server event reciever
+	Create a new client event sender
 ]=]
 function ClientEventSender.new(name: string, unreliable: boolean)
 	local self = setmetatable({}, ClientEventSender)
@@ -74,7 +76,7 @@ end
 	@within ClientEventSender
 	@param ... any
 
-	Fire the underlying event for the given player
+	Fire the underlying event to the server
 ]=]
 function ClientEventSender.Fire(self: Types.ClientEventSender, ...: any)
 	local event = self.Event :: RemoteEvent
@@ -82,6 +84,6 @@ function ClientEventSender.Fire(self: Types.ClientEventSender, ...: any)
 end
 
 return {
-	EventReciever = ClientEventReciever,
+	EventReceiver = ClientEventReceiver,
 	EventSender = ClientEventSender,
 }

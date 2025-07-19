@@ -7,22 +7,23 @@ local Types = require(Core.Types)
 local InstanceManager = require(Networking.InstanceManager)
 
 --[=[
-	@class ServerEventReciever
+	@class ServerEventReceiver
+	@server
 ]=]
-local ServerEventReciever = {}
-ServerEventReciever.__index = ServerEventReciever
+local ServerEventReceiver = {}
+ServerEventReceiver.__index = ServerEventReceiver
 
 --[=[
 	@function new
-	@within ServerEventReciever
+	@within ServerEventReceiver
 	@param name string
 	@param unreliable boolean
-	@return ServerEventReciever
+	@return ServerEventReceiver
 
-	Create a new server event reciever
+	Create a new server event Receiver
 ]=]
-function ServerEventReciever.new(name: string, unreliable: boolean)
-	local self = setmetatable({}, ServerEventReciever)
+function ServerEventReceiver.new(name: string, unreliable: boolean)
+	local self = setmetatable({}, ServerEventReceiver)
 
 	self.Name = if unreliable then "URE/" .. name else "RE/" .. name
 	self.Event = Instance.new(if unreliable then "UnreliableRemoteEvent" else "RemoteEvent")
@@ -34,13 +35,13 @@ end
 
 --[=[
 	@method SetCallback
-	@within ServerEventReciever
-	@param name callback (player: Player, ...any) -> ()
+	@within ServerEventReceiver
+	@param callback (player: Player, ...any) -> ()
 	@return RBXScriptConnection
 
-	Create a new server event reciever
+	Sets the function that will run when the client fires the event
 ]=]
-function ServerEventReciever.SetCallback(self: Types.ServerEventReciever, callback: (player: Player, ...any) -> ())
+function ServerEventReceiver.SetCallback(self: Types.ServerEventReceiver, callback: (player: Player, ...any) -> ())
 	local event = self.Event :: RemoteEvent
 	return event.OnServerEvent:Connect(callback)
 end
@@ -49,6 +50,7 @@ end
 
 --[=[
 	@class ServerEventSender
+	@server
 ]=]
 local ServerEventSender = {}
 ServerEventSender.__index = ServerEventSender
@@ -60,7 +62,7 @@ ServerEventSender.__index = ServerEventSender
 	@param unreliable boolean
 	@return ServerEventSender
 
-	Create a new server event reciever
+	Create a new server event sender
 ]=]
 function ServerEventSender.new(name: string, unreliable: boolean)
 	local self = setmetatable({}, ServerEventSender)
@@ -119,6 +121,6 @@ function ServerEventSender.Broadcast(self: Types.ServerEventSender, ...: any)
 end
 
 return {
-	EventReciever = ServerEventReciever,
+	EventReceiver = ServerEventReceiver,
 	EventSender = ServerEventSender,
 }
