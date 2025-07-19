@@ -1,5 +1,5 @@
-local Toasty = script.Parent
-local Types = require(Toasty.Types)
+local Core = script.Parent
+local Types = require(Core.Types)
 
 local Singletons: { Types.Singleton } = {}
 

@@ -1,5 +1,5 @@
-local SingletonManager = require(script.SingletonManager)
-local LifecycleManager = require(script.LifecycleManager)
+local SingletonManager = require(script.Core.SingletonManager)
+local LifecycleManager = require(script.Core.LifecycleManager)
 
 return {
 	Service = SingletonManager.Create,

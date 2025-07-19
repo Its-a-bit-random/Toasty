@@ -1,6 +1,6 @@
-local Toasty = script.Parent
-local Types = require(Toasty.Types)
-local SingletonManagerModule = require(Toasty.SingletonManager)
+local Core = script.Parent
+local Types = require(Core.Types)
+local SingletonManagerModule = require(Core.SingletonManager)
 local GetAll = SingletonManagerModule.GetAll
 
 local function DispatchImplement(implement: string, ...: any)
