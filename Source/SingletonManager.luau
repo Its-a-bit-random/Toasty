@@ -4,9 +4,13 @@ local Types = require(Toasty.Types)
 local Singletons: { Types.Singleton } = {}
 
 local function Create(options: Types.SingletonOptions)
-	return {
+	local newSingleton = {
 		Implements = options.Implements,
 	} :: Types.Singleton
+
+	table.insert(Singletons, newSingleton)
+
+	return newSingleton
 end
 
 local function GetSingletons(): { Types.Singleton }

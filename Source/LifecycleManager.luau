@@ -18,8 +18,19 @@ end
 
 local function Create(name: string)
 	return {
+		_ClassName = "LIFECYCLE", -- Maybe switch this index to be a symbol
 		Name = name,
 		Dispatch = function(...: any)
+			local args = { ... }
+
+			local firstArg = args[1]
+			if firstArg ~= nil then
+				local className = firstArg["_ClassName"]
+				if className ~= nil and className == "LIFECYCLE" then
+					error("Dispatch must be called with dot notation")
+				end
+			end
+
 			DispatchImplement(name, ...)
 		end,
 	} :: Types.Lifecycle
