@@ -1,10 +1,14 @@
+---
+sidebar_position: 1
+---
+
 # Singletons
 
 A singleton can be considered a `Service` (server) or `Controller` (client). Singletons are the backbone of Toasty, they are where most of your game logic will be. This page goes over the basics of creating a singleton and how they work!
 
 ## Creating a singleton
 
-```luau
+```lua
 local Toasty = require(path.to.Toasty)
 
 -- Server
@@ -20,7 +24,7 @@ Yep, that's all you need to do to create a singleton, from here you can hook int
 
 We can implement lifecycle events by passing the name into the `Implements` table within the options table with all the lifecycle events we would like to get on this service. Learn more [here](Lifecycle.md)
 
-```luau
+```lua
 local Toasty = require(path.to.Toasty)
 
 local myAwesomeService = Toasty.Service({

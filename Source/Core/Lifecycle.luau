@@ -19,18 +19,52 @@ local function GetSingletonsWhichImplement(lifecycle: string)
 	return singletonsWhichImplement
 end
 
+--[=[
+	@class Lifecycle
+	A lifecycle event
+]=]
 local Lifecycle = {}
 Lifecycle.__index = Lifecycle
 
+--[=[
+	@param name string -- Name of the lifecycle event
+	@param handler LifecycleHandler
+	@return Lifecycle
+	Create a new lifecycle event
+]=]
 function Lifecycle.new(name: string, handler: Types.LifecycleHandler)
 	local self = setmetatable({}, Lifecycle)
 
+	--[=[
+		@readonly
+		@prop Name string
+		@within Lifecycle
+
+		Name of the lifecycle
+	]=]
 	self.Name = name
+
+	--[=[
+		@readonly
+		@private
+		@prop _OnDispatch LifecycleHandler
+		@within Lifecycle
+
+		Handler which is in charge of calling the functions on singletons
+	]=]
 	self._OnDispatch = handler
 
 	return self :: Types.Lifecycle
 end
 
+--[=[
+	@method Dispatch
+	@param ... any -- Args to pass to all singletons which implement this lifecycle event
+	@within Lifecycle
+
+	Dispatch the lifecycle event with some arguments which are passed all singletons which implement
+	this lifecycle event.
+]=]
 function Lifecycle.Dispatch(self: Types.Lifecycle, ...: any)
 	local singletons = GetSingletonsWhichImplement(self.Name)
 	self._OnDispatch(singletons, self.Name, ...)

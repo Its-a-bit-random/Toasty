@@ -1,0 +1,25 @@
+title = "Toasty"
+
+gitSourceBranch = "main"
+changelog = false
+
+[[classOrder]]
+classes = ["Toasty"]
+
+[[classOrder]]
+section = "Core"
+classes = [
+	"Lifecycle",
+	"LifecycleManager",
+	"SingletonManager",
+	"Types"
+]
+
+
+[docusaurus]
+onBrokenLinks = "throw"
+onBrokenMarkdownLinks = "warn"
+
+[footer]
+style = "dark"
+copyright = "Copyright © 2025 Its a bit random. Built with Moonwave and Docusaurus"

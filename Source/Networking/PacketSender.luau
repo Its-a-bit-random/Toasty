@@ -11,14 +11,10 @@ type PacketSenderClass = {
 	Broadcast: (self: PacketSenderClass, ...any) -> nil,
 }
 
-function PacketSender._new(event: RemoteEvent)
+function PacketSender.WrapEvent(event: RemoteEvent)
 	local self = setmetatable({}, PacketSender)
 	self._Event = event
 	return self :: PacketSenderClass
-end
-
-function PacketSender.WrapEvent(event: RemoteEvent)
-	return PacketSender._new(event)
 end
 
 function PacketSender.Fire(self: PacketSenderClass, player: Player, ...: any)

@@ -12,6 +12,20 @@ local function DefaultHandler(singletons: { Types.Singleton }, name: string, ...
 	end
 end
 
+--[=[
+	@class LifecycleManager
+]=]
+
+--[=[
+	@function Create
+	@within LifecycleManager
+	@param name string
+	@param handler LifecycleHandler?
+	@return Lifecycle
+	
+	Create a new lifecycle event. Creating it via the manager makes the passing a
+	handler optional as it provides one by default.
+]=]
 local function Create(name: string, handler: Types.LifecycleHandler?)
 	local handlerToUse: Types.LifecycleHandler = if handler then handler else DefaultHandler
 	return Lifecycle.new(name, handlerToUse)

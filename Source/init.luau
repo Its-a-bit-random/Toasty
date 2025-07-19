@@ -3,6 +3,55 @@ local LifecycleManager = require(script.Core.LifecycleManager)
 
 local Networking = require(script.Networking)
 
+--[=[
+	@class Toasty
+	Entry point of Toasty framework
+]=]
+
+--[=[
+	@function Service
+	@param options SingletonOptions
+	@return Singleton
+	@within Toasty
+
+	Creates a new singleton through the [SingletonManager]
+]=]
+
+--[=[
+	@function Controller
+	@param options SingletonOptions
+	@return Singleton
+	@within Toasty
+
+	Creates a new singleton through the [SingletonManager]
+]=]
+
+--[=[
+	@function Lifecycle.Create
+	@param name string
+	@param handler LifecycleHandler?
+	@return Lifecycle
+	@within Toasty
+
+	Create a new lifecycle event via the [LifecycleManager]
+]=]
+
+--[=[
+	@function Bootstrap.LoadModules
+	@param parent Instance
+	@param recursive boolean
+	@within Toasty
+
+	Calls `require` on all [ModuleScript] within the parent instance passed
+]=]
+
+--[=[
+	@function Bootstrap.Toast
+	@within Toasty
+
+	Starts up toasty by Firing the OnInit lifecycle and then the OnStart lifecycle
+]=]
+
 return {
 	Service = SingletonManager.Create,
 	Controller = SingletonManager.Create,
