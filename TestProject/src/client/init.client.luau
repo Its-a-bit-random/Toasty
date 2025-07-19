@@ -1,7 +1,13 @@
 local Toasty = require(game:GetService("ReplicatedStorage").Packages.Toasty)
 
-Toasty.Networking.ServerToClientEventReciever("John"):Connect(function(message: string)
-	print(message)
+local event = Toasty.Networking.ClientEventReciever("John", false)
+local clientEvent = Toasty.Networking.ClientEventSender("JohnClient", false)
+
+event:SetCallback(function(...: any)
+	local args = { ... }
+	print(args)
 end)
+
+clientEvent:Fire("Poopy")
 
 Toasty.Bootstrap.Toast()

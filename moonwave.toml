@@ -15,6 +15,15 @@ classes = [
 	"Types"
 ]
 
+[[classOrder]]
+section = "Networking"
+classes = [
+	"ServerEventReciever",
+	"ServerEventSender",
+	"ClientEventReciever",
+	"ClientEventSender"
+]
+
 
 [docusaurus]
 onBrokenLinks = "throw"

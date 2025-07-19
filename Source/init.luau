@@ -1,8 +1,6 @@
 local SingletonManager = require(script.Core.SingletonManager)
 local LifecycleManager = require(script.Core.LifecycleManager)
 
-local Networking = require(script.Networking)
-
 --[=[
 	@class Toasty
 	Entry point of Toasty framework
@@ -52,6 +50,38 @@ local Networking = require(script.Networking)
 	Starts up toasty by Firing the OnInit lifecycle and then the OnStart lifecycle
 ]=]
 
+--[=[
+	@function Networking.ServerEventSender
+	@param name string
+	@param unreliable boolean
+	@return ServerEventSender
+	@within Toasty
+]=]
+
+--[=[
+	@function Networking.ServerEventReciever
+	@param name string
+	@param unreliable boolean
+	@return ServerEventReciever
+	@within Toasty
+]=]
+
+--[=[
+	@function Networking.ClientEventSender
+	@param name string
+	@param unreliable boolean
+	@return ClientEventSender
+	@within Toasty
+]=]
+
+--[=[
+	@function Networking.ClientEventReciever
+	@param name string
+	@param unreliable boolean
+	@return ClientEventReciever
+	@within Toasty
+]=]
+
 return {
 	Service = SingletonManager.Create,
 	Controller = SingletonManager.Create,
@@ -91,7 +121,10 @@ return {
 	},
 
 	Networking = {
-		ServerToClientEventReciever = Networking.ServerToClientReciever,
-		ServerToClientEventSender = Networking.ServerToClientSender,
+		ServerEventSender = require(script.Networking.Event.Server).EventSender.new,
+		ServerEventReciever = require(script.Networking.Event.Server).EventReciever.new,
+
+		ClientEventSender = require(script.Networking.Event.Client).EventSender.new,
+		ClientEventReciever = require(script.Networking.Event.Client).EventReciever.new,
 	},
 }
