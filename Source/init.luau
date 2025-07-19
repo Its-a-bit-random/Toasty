@@ -1,7 +1,10 @@
-local function HelloWorld()
-	print("Hello World")
-end
+local SingletonManager = require(script.SingletonManager)
+local LifecycleManager = require(script.LifecycleManager)
 
 return {
-	HelloWorld = HelloWorld,
+	Service = SingletonManager.Create,
+
+	Lifecycle = {
+		Create = LifecycleManager.Create,
+	},
 }
