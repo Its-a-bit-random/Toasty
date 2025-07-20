@@ -1,20 +1,17 @@
-local Toasty = require(game:GetService("ReplicatedStorage").Packages.Toasty)
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
-Toasty.Bootstrap.LoadModules(script.Services, true)
-Toasty.Bootstrap.Toast()
+local Toasty = require(ReplicatedStorage.Packages.Toasty)
 
-_G.__TOASTY_OBFUSCATE__ = true
+Toasty.Networking.SetupFromModule(ReplicatedStorage.Shared.Net)
 
-local event = Toasty.Networking.ServerEventSender("John", false)
-local clientEvent = Toasty.Networking.ServerEventReceiver("JohnClient", false)
+local Net = require(ReplicatedStorage.Shared.Net)
 
-clientEvent:SetCallback(function(player: Player, ...: any)
-	print(player, ...)
+Net.Events.MyEvent.Server:AddCallback(function(player, ...: any)
+	print(...)
+	Net.Events.MyEvent.Server:Fire(player, "Hello", "World")
 end)
 
-for i = 1, 5, 1 do
-	print(i)
-	task.wait(1)
-end
-
-event:Broadcast("John", "35")
+Net.Functions.MyFunction.Server:SetCallback(function(player: Player, ...: any)
+	local args = { ... }
+	return player.Name .. " " .. table.concat(args, ", ")
+end)

@@ -39,38 +39,6 @@ local LifecycleManager = require(script.Core.LifecycleManager)
 	@within Toasty
 ]=]
 
---[=[
-	@function Networking.ServerEventSender
-	@param name string
-	@param unreliable boolean
-	@return ServerEventSender
-	@within Toasty
-]=]
-
---[=[
-	@function Networking.ServerEventReceiver
-	@param name string
-	@param unreliable boolean
-	@return ServerEventReceiver
-	@within Toasty
-]=]
-
---[=[
-	@function Networking.ClientEventSender
-	@param name string
-	@param unreliable boolean
-	@return ClientEventSender
-	@within Toasty
-]=]
-
---[=[
-	@function Networking.ClientEventReceiver
-	@param name string
-	@param unreliable boolean
-	@return ClientEventReceiver
-	@within Toasty
-]=]
-
 return {
 	Service = SingletonManager.Create,
 	Controller = SingletonManager.Create,
@@ -81,11 +49,5 @@ return {
 
 	Bootstrap = require(script.Bootstrap),
 
-	Networking = {
-		ServerEventSender = require(script.Networking.Event.Server).EventSender.new,
-		ServerEventReceiver = require(script.Networking.Event.Server).EventReceiver.new,
-
-		ClientEventSender = require(script.Networking.Event.Client).EventSender.new,
-		ClientEventReceiver = require(script.Networking.Event.Client).EventReceiver.new,
-	},
+	Networking = require(script.Networking),
 }

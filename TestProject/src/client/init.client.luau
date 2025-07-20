@@ -1,15 +1,18 @@
-local Toasty = require(game:GetService("ReplicatedStorage").Packages.Toasty)
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
-_G.__TOASTY_OBFUSCATE__ = true
+local Toasty = require(ReplicatedStorage.Packages.Toasty)
+Toasty.Networking.SetupFromModule(ReplicatedStorage.Shared.Net)
 
-local event = Toasty.Networking.ClientEventReceiver("John", false)
-local clientEvent = Toasty.Networking.ClientEventSender("JohnClient", false)
+local Net = require(ReplicatedStorage.Shared.Net)
 
-event:SetCallback(function(...: any)
-	local args = { ... }
-	print(args)
+Net.Events.MyEvent.Client:AddCallback(function(...: any)
+	print(...)
 end)
 
-clientEvent:Fire("Poopy")
+Net.Events.MyEvent.Client:Fire("Hello", "World")
 
-Toasty.Bootstrap.Toast()
+local prom = Net.Functions.MyFunction.Client:Fire("HelloWorld"):andThen(function(...)
+	print(...)
+end)
+
+print(prom)

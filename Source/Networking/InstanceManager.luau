@@ -4,31 +4,21 @@ local RunService = game:GetService("RunService")
 local Packages = script.Parent.Parent.Parent
 local Sha256 = require(Packages.Sha256)
 
-local ObjectsFolder: Folder
-local EventsFolder: Folder
-local FunctionsFolder: Folder
+local eventsFolder: Folder
+local functionsFolder: Folder
 
 if RunService:IsServer() then
-	ObjectsFolder = Instance.new("Folder")
-	ObjectsFolder.Name = "@ToastyEvents"
-	ObjectsFolder.Parent = ReplicatedStorage
+	eventsFolder = Instance.new("Folder")
+	eventsFolder.Name = "ToastyNetworking@Events"
+	eventsFolder.Parent = ReplicatedStorage
 
-	EventsFolder = Instance.new("Folder")
-	EventsFolder.Name = "RE"
-	EventsFolder.Parent = ObjectsFolder
-
-	FunctionsFolder = Instance.new("Folder")
-	FunctionsFolder.Name = "RF"
-	FunctionsFolder.Parent = ObjectsFolder
+	functionsFolder = Instance.new("Folder")
+	functionsFolder.Name = "ToastyNetworking@Functions"
+	functionsFolder.Parent = ReplicatedStorage
 else
-	ObjectsFolder = ReplicatedStorage:WaitForChild("@ToastyEvents", 10)
-	assert(ObjectsFolder ~= nil, "Client could not find networking objects folder")
-
-	EventsFolder = ObjectsFolder:WaitForChild("RE", 10) :: Folder
-	assert(EventsFolder ~= nil, "Client could not find RE folder")
-
-	FunctionsFolder = ObjectsFolder:WaitForChild("RF", 10) :: Folder
-	assert(FunctionsFolder ~= nil, "Client could not find RF folder")
+	eventsFolder = ReplicatedStorage:WaitForChild("ToastyNetworking@Events", 5)
+	functionsFolder = ReplicatedStorage:WaitForChild("ToastyNetworking@Functions", 5)
+	assert(eventsFolder ~= nil or functionsFolder ~= nil, `Client could not find event or functions folder`)
 end
 
 local function GetEventServer(name: string, unreliable: boolean)
@@ -36,29 +26,49 @@ local function GetEventServer(name: string, unreliable: boolean)
 		name = Sha256(name)
 	end
 
-	local event = EventsFolder:FindFirstChild(name)
+	local event = eventsFolder:FindFirstChild(name)
 	if event == nil then
-		event = Instance.new(if unreliable then "UnreliableRemoteEvent" else "RemoteEvent")
+		local className = if unreliable then "UnreliableRemoteEvent" else "RemoteEvent"
+		event = Instance.new(className)
 		event.Name = name
-		event.Parent = EventsFolder
+		event.Parent = eventsFolder
 	end
 
 	return event :: RemoteEvent
 end
 
-local function GetEventClient(name: string)
+local function GetFunctionServer(name: string, unreliable: boolean)
 	if _G.__TOASTY_OBFUSCATE__ == true then
 		name = Sha256(name)
 	end
 
-	return EventsFolder:WaitForChild(name, 5) :: RemoteEvent?
+	local event = functionsFolder:FindFirstChild(name)
+	if event == nil then
+		local className = if unreliable then "UnreliableRemoteFunction" else "RemoteFunction"
+		event = Instance.new(className)
+		event.Name = name
+		event.Parent = functionsFolder
+	end
+
+	return event :: RemoteFunction
+end
+
+local function GetEventClient(name: string)
+	local event = eventsFolder:WaitForChild(name, 5)
+	assert(event ~= nil, `Could not find event {name}`)
+	return event :: RemoteEvent
+end
+
+local function GetFunctionClient(name: string)
+	local event = functionsFolder:WaitForChild(name, 5)
+	assert(event ~= nil, `Could not find function {name}`)
+	return event :: RemoteFunction
 end
 
 return {
-	ObjectsFolder = ObjectsFolder,
-	EventsFolder = EventsFolder,
-	FunctionsFolder = FunctionsFolder,
-
-	GetEventClient = GetEventClient,
 	GetEventServer = GetEventServer,
+	GetEventClient = GetEventClient,
+
+	GetFunctionServer = GetFunctionServer,
+	GetFunctionClient = GetFunctionClient,
 }
