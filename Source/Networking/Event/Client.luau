@@ -24,8 +24,6 @@ function ClientEventReceiver.new(name: string, unreliable: boolean)
 	local self = setmetatable({}, ClientEventReceiver)
 
 	self.Name = if unreliable then "URE/" .. name else "RE/" .. name
-	self.Event = InstanceManager.EventsFolder:WaitForChild(self.Name, 10)
-	assert(self.Event ~= nil, `Event {self.Name} could not be found`)
 
 	return self
 end
@@ -39,7 +37,11 @@ end
 	Sets the function that will run when the event is fired from the server
 ]=]
 function ClientEventReceiver.SetCallback(self: Types.ClientEventReceiver, callback: (...any) -> ())
-	local event = self.Event :: RemoteEvent
+	local event = InstanceManager.GetEventClient(self.Name)
+	if event == nil then
+		warn("Server has no sender for event:", self.Name)
+		return
+	end
 	return event.OnClientEvent:Connect(callback)
 end
 
@@ -65,8 +67,6 @@ function ClientEventSender.new(name: string, unreliable: boolean)
 	local self = setmetatable({}, ClientEventSender)
 
 	self.Name = if unreliable then "URE/" .. name else "RE/" .. name
-	self.Event = InstanceManager.EventsFolder:WaitForChild(self.Name, 10)
-	assert(self.Event ~= nil, `Event {self.Name} could not be found`)
 
 	return self
 end
@@ -79,7 +79,11 @@ end
 	Fire the underlying event to the server
 ]=]
 function ClientEventSender.Fire(self: Types.ClientEventSender, ...: any)
-	local event = self.Event :: RemoteEvent
+	local event = InstanceManager.GetEventClient(self.Name)
+	if event == nil then
+		warn("Server has no reciever for event:", self.Name)
+		return
+	end
 	event:FireServer(...)
 end
 

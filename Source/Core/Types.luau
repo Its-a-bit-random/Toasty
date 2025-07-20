@@ -36,28 +36,28 @@ export type Lifecycle = {
 
 export type ServerEventReceiver = {
 	Name: string,
-	Event: RemoteEvent | UnreliableRemoteEvent,
+	Unreliable: boolean,
 
 	SetCallback: (self: ServerEventReceiver, callback: (player: Player, ...any) -> ()) -> (),
 }
 
 export type ServerEventSender = {
 	Name: string,
-	Event: RemoteEvent | UnreliableRemoteEvent,
+	Unreliable: boolean,
 
 	Fire: (self: ServerEventSender, player: Player, ...any) -> (),
+	FirePlayers: (self: ServerEventSender, players: { Player }, ...any) -> (),
+	Broadcast: (self: ServerEventSender, ...any) -> (),
 }
 
 export type ClientEventReceiver = {
 	Name: string,
-	Event: RemoteEvent | UnreliableRemoteEvent,
 
 	SetCallback: (self: ServerEventReceiver, callback: (player: Player, ...any) -> ()) -> (),
 }
 
 export type ClientEventSender = {
 	Name: string,
-	Event: RemoteEvent | UnreliableRemoteEvent,
 
 	Fire: (self: ServerEventSender, ...any) -> (),
 }

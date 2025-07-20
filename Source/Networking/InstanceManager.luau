@@ -27,8 +27,26 @@ else
 	assert(FunctionsFolder ~= nil, "Client could not find RF folder")
 end
 
+local function GetEventServer(name: string, unreliable: boolean)
+	local event = EventsFolder:FindFirstChild(name)
+	if event == nil then
+		event = Instance.new(if unreliable then "UnreliableRemoteEvent" else "RemoteEvent")
+		event.Name = name
+		event.Parent = EventsFolder
+	end
+
+	return event :: RemoteEvent
+end
+
+local function GetEventClient(name: string)
+	return EventsFolder:WaitForChild(name, 5) :: RemoteEvent?
+end
+
 return {
 	ObjectsFolder = ObjectsFolder,
 	EventsFolder = EventsFolder,
 	FunctionsFolder = FunctionsFolder,
+
+	GetEventClient = GetEventClient,
+	GetEventServer = GetEventServer,
 }

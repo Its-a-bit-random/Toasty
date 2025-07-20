@@ -26,9 +26,8 @@ function ServerEventReceiver.new(name: string, unreliable: boolean)
 	local self = setmetatable({}, ServerEventReceiver)
 
 	self.Name = if unreliable then "URE/" .. name else "RE/" .. name
-	self.Event = Instance.new(if unreliable then "UnreliableRemoteEvent" else "RemoteEvent")
-	self.Event.Name = self.Name
-	self.Event.Parent = InstanceManager.EventsFolder
+	self.Unreliable = unreliable
+	InstanceManager.GetEventServer(self.Name, self.Unreliable)
 
 	return self
 end
@@ -42,7 +41,7 @@ end
 	Sets the function that will run when the client fires the event
 ]=]
 function ServerEventReceiver.SetCallback(self: Types.ServerEventReceiver, callback: (player: Player, ...any) -> ())
-	local event = self.Event :: RemoteEvent
+	local event = InstanceManager.GetEventServer(self.Name, self.Unreliable)
 	return event.OnServerEvent:Connect(callback)
 end
 
@@ -68,10 +67,8 @@ function ServerEventSender.new(name: string, unreliable: boolean)
 	local self = setmetatable({}, ServerEventSender)
 
 	self.Name = if unreliable then "URE/" .. name else "RE/" .. name
-	self.Event = InstanceManager.EventsFolder:FindFirstChild(name)
-		or Instance.new(if unreliable then "UnreliableRemoteEvent" else "RemoteEvent")
-	self.Event.Name = self.Name
-	self.Event.Parent = InstanceManager.EventsFolder
+	self.unreliable = unreliable
+	InstanceManager.GetEventServer(self.Name, self.Unreliable)
 
 	return self
 end
@@ -85,7 +82,7 @@ end
 	Fire the underlying event for the given player
 ]=]
 function ServerEventSender.Fire(self: Types.ServerEventSender, player: Player, ...: any)
-	local event = self.Event :: RemoteEvent
+	local event = InstanceManager.GetEventServer(self.Name, self.Unreliable)
 	event:FireClient(player, ...)
 end
 
@@ -98,7 +95,7 @@ end
 	Fire the underlying event for the given players
 ]=]
 function ServerEventSender.FirePlayers(self: Types.ServerEventSender, players: { Player }, ...: any)
-	local event = self.Event :: RemoteEvent
+	local event = InstanceManager.GetEventServer(self.Name, self.Unreliable)
 
 	for _, player in players do
 		event:FireClient(player, ...)
@@ -113,7 +110,7 @@ end
 	Fire the underlying event for all players in the game
 ]=]
 function ServerEventSender.Broadcast(self: Types.ServerEventSender, ...: any)
-	local event = self.Event :: RemoteEvent
+	local event = InstanceManager.GetEventServer(self.Name, self.Unreliable)
 
 	for _, player in Players:GetPlayers() do
 		event:FireClient(player, ...)
