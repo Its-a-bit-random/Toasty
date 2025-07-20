@@ -1,5 +1,8 @@
 local Players = game:GetService("Players")
 
+--[=[
+	@class ServerEvent
+]=]
 local ServerEvent = {}
 ServerEvent.__index = ServerEvent
 
@@ -11,32 +14,63 @@ export type ServerEvent = {
 	_Instance: RemoteEvent,
 }
 
+--[=[
+	@function new
+	@param instance RemoteEvent
+	@return ServerEvent
+	@within ServerEvent
+]=]
 function ServerEvent.new(instance: RemoteEvent)
 	local self = setmetatable({}, ServerEvent)
 	self._Instance = instance
 	return self :: ServerEvent
 end
 
+--[=[
+	@method Fire
+	@param player Player
+	@param ... any
+	@within ServerEvent
+]=]
 function ServerEvent.Fire(self: ServerEvent, player: Player, ...: any)
 	self._Instance:FireClient(player, ...)
 end
 
+--[=[
+	@method FirePlayers
+	@param players {Player}
+	@param ... any
+	@within ServerEvent
+]=]
 function ServerEvent.FirePlayers(self: ServerEvent, players: { Player }, ...: any)
 	for _, player in players do
 		self:Fire(player, ...)
 	end
 end
 
+--[=[
+	@method Broadcast
+	@param ... any
+	@within ServerEvent
+]=]
 function ServerEvent.Broadcast(self: ServerEvent, ...: any)
 	self:FirePlayers(Players:GetPlayers(), ...)
 end
 
+--[=[
+	@method AddCallback
+	@param callback (player: Player, ...any) -> ()
+	@within ServerEvent
+]=]
 function ServerEvent.AddCallback(self: ServerEvent, callback: (player: Player, ...any) -> ())
 	self._Instance.OnServerEvent:Connect(callback)
 end
 
 -------------------------------------------------------------------
 
+--[=[
+	@class ServerFunction
+]=]
 local ServerFunction = {}
 ServerFunction.__index = ServerFunction
 
@@ -48,27 +82,25 @@ export type ServerFunction = {
 	_Instance: RemoteFunction,
 }
 
+--[=[
+	@function new
+	@param instance RemoteFunction
+	@return ServerFunction
+	@within ServerFunction
+]=]
 function ServerFunction.new(instance: RemoteFunction)
 	local self = setmetatable({}, ServerFunction)
 	self._Instance = instance
 	return self :: ServerFunction
 end
 
-function ServerFunction.Fire(self: ServerFunction, player: Player, ...: any)
-	local args = { ... }
-	self._Instance:InvokeClient(player, table.unpack(args))
-end
+--[=[
+	@method SetCallback
+	@param callback (player: Player, ...any) -> ()
+	@within ServerFunction
 
-function ServerFunction.FirePlayers(self: ServerFunction, players: { Player }, ...: any)
-	for _, player in players do
-		self:Fire(player, ...)
-	end
-end
-
-function ServerFunction.Broadcast(self: ServerFunction, ...: any)
-	self:FirePlayers(Players:GetPlayers(), ...)
-end
-
+	**sets** the callback for the function, a function can only have **one** callback.
+]=]
 function ServerFunction.SetCallback(self: ServerFunction, callback: (player: Player, ...any) -> ())
 	self._Instance.OnServerInvoke = callback
 end

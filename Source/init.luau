@@ -36,6 +36,13 @@ local LifecycleManager = require(script.Core.LifecycleManager)
 
 --[=[
 	@prop Bootstrap Bootstrap
+	@readonly
+	@within Toasty
+]=]
+
+--[=[
+	@prop Networking Networking
+	@readonly
 	@within Toasty
 ]=]
 

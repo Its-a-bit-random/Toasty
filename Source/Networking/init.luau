@@ -7,6 +7,35 @@ local Util = require(script.Parent.Util)
 local ServerClasses = require(script.Classes.Server)
 local ClientClasses = require(script.Classes.Client)
 
+--[=[
+	@class Networking
+	@external Promise https://eryn.io/roblox-lua-promise/api/Promise
+]=]
+
+--[=[
+	@interface EventReturn
+	.Client ClientEvent
+	.Server ServerEvent
+	@within Networking
+]=]
+
+--[=[
+	@interface FunctionReturn
+	.Client ClientFunction
+	.Server ServerFunction
+	@within Networking
+]=]
+
+--[=[
+	@function CreateEvent
+	@param inputs {TypeCheckFunc}
+	@param outputs {TypeCheckFunc}
+	@return EventReturn
+	@within Networking
+
+	Create an event with given inputs and outputs that will be automatically type
+	checked by Toasty.
+]=]
 local function CreateEvent(inputs: { Shared.TypeCheckFunc }, outputs: { Shared.TypeCheckFunc })
 	local tbl = {
 		Instance = Shared.EventMarker,
@@ -16,6 +45,16 @@ local function CreateEvent(inputs: { Shared.TypeCheckFunc }, outputs: { Shared.T
 	return tbl :: { Client: ClientClasses.ClientEvent, Server: ServerClasses.ServerEvent }
 end
 
+--[=[
+	@function CreateFunction
+	@param inputs {TypeCheckFunc}
+	@param outputs {TypeCheckFunc}
+	@return FunctionReturn
+	@within Networking
+
+	Create a function with given inputs and outputs that will be automatically type
+	checked by Toasty.
+]=]
 local function CreateFunction(inputs: { Shared.TypeCheckFunc }, outputs: { Shared.TypeCheckFunc })
 	local tbl = {
 		Instance = Shared.FunctionMarker,
@@ -25,6 +64,13 @@ local function CreateFunction(inputs: { Shared.TypeCheckFunc }, outputs: { Share
 	return tbl :: { Client: ClientClasses.ClientFunction, Server: ServerClasses.ServerFunction }
 end
 
+--[=[
+	@private
+	@function ParseEvents
+	@param key string
+	@param events {EventTable} | EventTable
+	@within Networking
+]=]
 local function ParseEvents(key: string, events: { { Shared.EventTable } | Shared.EventTable })
 	local tableType = Util.Table.CheckTableType(events)
 	if tableType == Util.Table.CheckTableTypeResult.NotTable then
@@ -61,6 +107,18 @@ local function ParseEvents(key: string, events: { { Shared.EventTable } | Shared
 	end
 end
 
+--[=[
+	@function SetupFromModule
+	@param module ModuleScript
+	@within Networking
+
+	Takes in a module script that contains a table of events and functions and conerts
+	it into objects.
+
+	:::warning
+	This is temporary and the need for this will be removed eventually.
+	:::
+]=]
 local function SetupFromModule(module: ModuleScript)
 	local table = require(module) :: Shared.NetworkingTable
 	ParseEvents("E", table.Events)

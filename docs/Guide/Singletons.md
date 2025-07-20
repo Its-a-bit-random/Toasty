@@ -15,7 +15,7 @@ local Toasty = require(path.to.Toasty)
 local myAwesomeService = Toasty.Service({})
 
 -- Client
-local myAwesomeService = Toasty.Controller({})
+local myAwesomeController = Toasty.Controller({})
 ```
 
 Yep, that's all you need to do to create a singleton, from here you can hook into Lifecycles. The empty table passed is a options table which can be used to configure the singleton like implementing lifecycle.

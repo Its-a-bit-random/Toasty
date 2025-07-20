@@ -21,6 +21,17 @@ else
 	assert(eventsFolder ~= nil or functionsFolder ~= nil, `Client could not find event or functions folder`)
 end
 
+--[=[
+	@class InstanceManager
+]=]
+
+--[=[
+	@function GetEventServer
+	@param name string
+	@param unreliable boolean
+	@return RemoteEvent
+	@within InstanceManager
+]=]
 local function GetEventServer(name: string, unreliable: boolean)
 	if _G.__TOASTY_OBFUSCATE__ == true then
 		name = Sha256(name)
@@ -37,6 +48,13 @@ local function GetEventServer(name: string, unreliable: boolean)
 	return event :: RemoteEvent
 end
 
+--[=[
+	@function GetFunctionServer
+	@param name string
+	@param unreliable boolean
+	@return RemoteFunction
+	@within InstanceManager
+]=]
 local function GetFunctionServer(name: string, unreliable: boolean)
 	if _G.__TOASTY_OBFUSCATE__ == true then
 		name = Sha256(name)
@@ -53,12 +71,24 @@ local function GetFunctionServer(name: string, unreliable: boolean)
 	return event :: RemoteFunction
 end
 
+--[=[
+	@function GetEventClient
+	@param name string
+	@return RemoteEvent
+	@within InstanceManager
+]=]
 local function GetEventClient(name: string)
 	local event = eventsFolder:WaitForChild(name, 5)
 	assert(event ~= nil, `Could not find event {name}`)
 	return event :: RemoteEvent
 end
 
+--[=[
+	@function GetFunctionClient
+	@param name string
+	@return RemoteFunction
+	@within InstanceManager
+]=]
 local function GetFunctionClient(name: string)
 	local event = functionsFolder:WaitForChild(name, 5)
 	assert(event ~= nil, `Could not find function {name}`)
