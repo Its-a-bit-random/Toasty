@@ -1,2 +1,4 @@
 sourcemap.json
 Packages/
+
+*.DS_Store
