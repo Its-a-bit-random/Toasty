@@ -1,0 +1,16 @@
+{
+	"name": "ToastyServe",
+	"tree": {
+		"$className": "DataModel",
+
+		"ReplicatedStorage": {
+			"$className": "ReplicatedStorage",
+			"Packages": {
+				"$path": "Packages",
+				"Toasty": {
+					"$path": "Source"
+				}
+			}
+		}
+	}
+}

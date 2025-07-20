@@ -1,4 +1,5 @@
 {
 	"editor.defaultFormatter": "JohnnyMorganz.stylua",
-	"files.eol": "\r\n"
+	"files.eol": "\r\n",
+	"luau-lsp.sourcemap.rojoProjectFile": "serve.project.json"
 }

@@ -15,3 +15,4 @@ private = true
 
 [dependencies]
 Promise = "evaera/promise@4.0.0"
+Sha256 = "dekkonot/sha256@1.0.1"
