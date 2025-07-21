@@ -4,21 +4,43 @@ local RunService = game:GetService("RunService")
 local Packages = script.Parent.Parent.Parent
 local Sha256 = require(Packages.Sha256)
 
-local eventsFolder: Folder
-local functionsFolder: Folder
+local RemotesFolder: Folder
 
 if RunService:IsServer() then
-	eventsFolder = Instance.new("Folder")
-	eventsFolder.Name = "ToastyNetworking@Events"
-	eventsFolder.Parent = ReplicatedStorage
-
-	functionsFolder = Instance.new("Folder")
-	functionsFolder.Name = "ToastyNetworking@Functions"
-	functionsFolder.Parent = ReplicatedStorage
+	RemotesFolder = Instance.new("Folder")
+	RemotesFolder.Name = "Remotes"
+	RemotesFolder.Parent = ReplicatedStorage
 else
-	eventsFolder = ReplicatedStorage:WaitForChild("ToastyNetworking@Events", 5)
-	functionsFolder = ReplicatedStorage:WaitForChild("ToastyNetworking@Functions", 5)
-	assert(eventsFolder ~= nil or functionsFolder ~= nil, `Client could not find event or functions folder`)
+	RemotesFolder = ReplicatedStorage:WaitForChild("Remotes", 5)
+	assert(RemotesFolder ~= nil, "Client could not find remotes folder")
+end
+
+local function GetFromPath(path: string, root: Instance, className: string)
+	local splitPath = path:split("/")
+	local instanceName = splitPath[#splitPath]
+	
+	for i = 1, #splitPath - 1, 1 do
+		local child = splitPath[i]
+		local childInstance = root:FindFirstChild(child)
+		if childInstance == nil then
+			childInstance = Instance.new("Folder")
+			childInstance.Name = child
+			childInstance.Parent = root
+		end
+
+		root = childInstance
+	end
+
+	local foundInstance = root:FindFirstChild(instanceName)
+
+	if foundInstance then
+		return foundInstance, false
+	end
+
+	local realInstance = Instance.new(className)
+	realInstance.Name = instanceName
+	realInstance.Parent = root
+	return realInstance, true
 end
 
 --[=[
@@ -37,12 +59,12 @@ local function GetEventServer(name: string, unreliable: boolean)
 		name = Sha256(name)
 	end
 
-	local event = eventsFolder:FindFirstChild(name)
+	local className = if unreliable then "UnreliableRemoteEvent" else "RemoteEvent"
+	local event = GetFromPath(name, RemotesFolder, className)
 	if event == nil then
-		local className = if unreliable then "UnreliableRemoteEvent" else "RemoteEvent"
 		event = Instance.new(className)
 		event.Name = name
-		event.Parent = eventsFolder
+		event.Parent = RemotesFolder
 	end
 
 	return event :: RemoteEvent
@@ -60,12 +82,12 @@ local function GetFunctionServer(name: string, unreliable: boolean)
 		name = Sha256(name)
 	end
 
-	local event = functionsFolder:FindFirstChild(name)
+	local className = if unreliable then "UnreliableRemoteFunction" else "RemoteFunction"
+	local event = GetFromPath(name, RemotesFolder, className)
 	if event == nil then
-		local className = if unreliable then "UnreliableRemoteFunction" else "RemoteFunction"
 		event = Instance.new(className)
 		event.Name = name
-		event.Parent = functionsFolder
+		event.Parent = RemotesFolder
 	end
 
 	return event :: RemoteFunction
@@ -78,8 +100,8 @@ end
 	@within InstanceManager
 ]=]
 local function GetEventClient(name: string)
-	local event = eventsFolder:WaitForChild(name, 5)
-	assert(event ~= nil, `Could not find event {name}`)
+	local event, created = GetFromPath(name, RemotesFolder, "RemoteEvent")
+	assert(created == false, `Could not find event {name}`)
 	return event :: RemoteEvent
 end
 
@@ -90,8 +112,8 @@ end
 	@within InstanceManager
 ]=]
 local function GetFunctionClient(name: string)
-	local event = functionsFolder:WaitForChild(name, 5)
-	assert(event ~= nil, `Could not find function {name}`)
+	local event, created = GetFromPath(name, RemotesFolder, "RemoteFunction")
+	assert(created == false, `Could not find event {name}`)
 	return event :: RemoteFunction
 end
 

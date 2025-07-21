@@ -102,7 +102,11 @@ local function ParseEvents(key: string, events: { { Shared.EventTable } | Shared
 
 	if tableType == Util.Table.CheckTableTypeResult.TableOfTables then
 		for childKey, childEvents in events do
-			ParseEvents(key .. "/" .. childKey, childEvents)
+			local newKey = key .. "/" .. childKey
+			if key == "" then
+				newKey = childKey
+			end
+			ParseEvents(newKey, childEvents)
 		end
 	end
 end
@@ -121,8 +125,7 @@ end
 ]=]
 local function SetupFromModule(module: ModuleScript)
 	local table = require(module) :: Shared.NetworkingTable
-	ParseEvents("E", table.Events)
-	ParseEvents("F", table.Functions)
+	ParseEvents("", table)
 end
 
 return {
