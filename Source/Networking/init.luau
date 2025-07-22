@@ -36,11 +36,9 @@ local ClientClasses = require(script.Classes.Client)
 	Create an event with given inputs and outputs that will be automatically type
 	checked by Toasty.
 ]=]
-local function CreateEvent(inputs: { Shared.TypeCheckFunc }, outputs: { Shared.TypeCheckFunc })
+local function CreateEvent()
 	local tbl = {
 		Instance = Shared.EventMarker,
-		Inputs = inputs,
-		Outputs = outputs,
 	} :: any
 	return tbl :: { Client: ClientClasses.ClientEvent, Server: ServerClasses.ServerEvent }
 end
@@ -55,11 +53,9 @@ end
 	Create a function with given inputs and outputs that will be automatically type
 	checked by Toasty.
 ]=]
-local function CreateFunction(inputs: { Shared.TypeCheckFunc }, outputs: { Shared.TypeCheckFunc })
+local function CreateFunction()
 	local tbl = {
 		Instance = Shared.FunctionMarker,
-		Inputs = inputs,
-		Outputs = outputs,
 	} :: any
 	return tbl :: { Client: ClientClasses.ClientFunction, Server: ServerClasses.ServerFunction }
 end
@@ -133,5 +129,5 @@ return {
 	CreateFunction = CreateFunction,
 
 	SetupFromModule = SetupFromModule,
-	Arg = require(script.Arg)
+	Arg = require(script.Arg),
 }
