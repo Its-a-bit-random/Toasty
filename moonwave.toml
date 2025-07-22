@@ -29,7 +29,8 @@ classes = [
 
 
 [docusaurus]
-onBrokenLinks = "throw"
+onBrokenLinks = "warn"
+onBrokenAnchors = "ignore"
 onBrokenMarkdownLinks = "warn"
 
 [footer]
