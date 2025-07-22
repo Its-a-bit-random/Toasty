@@ -1,7 +1,5 @@
-local ReplicatedStorage = game:GetService("ReplicatedStorage")
-
 local Shared = require(script.Parent.Parent.Shared)
-local Promise = require(ReplicatedStorage.Packages.Promise)
+local Promise = require(script.Parent.Parent.Parent.Parent.Promise)
 
 --[=[
 	@class ClientEvent
