@@ -1,5 +1,7 @@
 local Players = game:GetService("Players")
 
+local Shared = require(script.Parent.Parent.Shared)
+
 --[=[
 	@class ServerEvent
 ]=]
@@ -10,8 +12,13 @@ export type ServerEvent = {
 	Fire: (self: ServerEvent, player: Player, ...any) -> (),
 	FirePlayers: (self: ServerEvent, players: { Player }, ...any) -> (),
 	Broadcast: (self: ServerEvent, ...any) -> (),
-	AddCallback: (self: ServerEvent, callback: (player: Player, ...any) -> ()) -> RBXScriptConnection,
+	SetCallback: (
+		self: ServerEvent,
+		expects: { Shared.TypeCheckFunc },
+		callback: (player: Player, ...any) -> ()
+	) -> RBXScriptConnection,
 	_Instance: RemoteEvent,
+	_CallbackSet: boolean,
 }
 
 --[=[
@@ -22,6 +29,7 @@ export type ServerEvent = {
 ]=]
 function ServerEvent.new(instance: RemoteEvent)
 	local self = setmetatable({}, ServerEvent)
+	self._CallbackSet = false
 	self._Instance = instance
 	return self :: ServerEvent
 end
@@ -58,12 +66,43 @@ function ServerEvent.Broadcast(self: ServerEvent, ...: any)
 end
 
 --[=[
-	@method AddCallback
+	@method SetCallback
+	@param expects {TypeCheckFunc} -- What is expected from the client
 	@param callback (player: Player, ...any) -> ()
 	@within ServerEvent
+
+	Sets the callback for the event.
 ]=]
-function ServerEvent.AddCallback(self: ServerEvent, callback: (player: Player, ...any) -> ())
-	self._Instance.OnServerEvent:Connect(callback)
+function ServerEvent.SetCallback(
+	self: ServerEvent,
+	expects: { Shared.TypeCheckFunc },
+	callback: (player: Player, ...any) -> ()
+)
+	if self._CallbackSet then
+		error("Callback already set")
+		return
+	end
+	self._CallbackSet = true
+	self._Instance.OnServerEvent:Connect(function(player: Player, ...: any)
+		local args = { ... }
+
+		for i, arg in args do
+			local checkFunc = expects[i]
+			if checkFunc == nil then
+				warn("Failed type check: No check func for arg")
+				error("Unprocessed")
+			end
+
+			local success, errorMessage = checkFunc(arg)
+
+			if not success then
+				warn("Failed type check: Check func returned false:", errorMessage)
+				error("Unprocessed")
+			end
+		end
+
+		callback(player, ...)
+	end)
 end
 
 -------------------------------------------------------------------
@@ -78,8 +117,13 @@ export type ServerFunction = {
 	Fire: (self: ServerFunction, player: Player, ...any) -> (),
 	FirePlayers: (self: ServerFunction, players: { Player }, ...any) -> (),
 	Broadcast: (self: ServerFunction, ...any) -> (),
-	SetCallback: (self: ServerEvent, callback: (player: Player, ...any) -> ()) -> RBXScriptConnection,
+	SetCallback: (
+		self: ServerEvent,
+		expects: { Shared.TypeCheckFunc },
+		callback: (player: Player, ...any) -> ()
+	) -> RBXScriptConnection,
 	_Instance: RemoteFunction,
+	_CallbackSet: boolean,
 }
 
 --[=[
@@ -91,18 +135,49 @@ export type ServerFunction = {
 function ServerFunction.new(instance: RemoteFunction)
 	local self = setmetatable({}, ServerFunction)
 	self._Instance = instance
+	self._CallbackSet = false
 	return self :: ServerFunction
 end
 
 --[=[
 	@method SetCallback
+	@param expects {TypeCheckFunc} -- What is expected from the client
 	@param callback (player: Player, ...any) -> ()
 	@within ServerFunction
 
-	**sets** the callback for the function, a function can only have **one** callback.
+	Sets the callback for the event.
 ]=]
-function ServerFunction.SetCallback(self: ServerFunction, callback: (player: Player, ...any) -> ())
-	self._Instance.OnServerInvoke = callback
+function ServerFunction.SetCallback(
+	self: ServerFunction,
+	expects: { Shared.TypeCheckFunc },
+	callback: (player: Player, ...any) -> ()
+)
+	if self._CallbackSet then
+		error("Callback already set")
+		return
+	end
+
+	self._CallbackSet = true
+	self._Instance.OnServerInvoke = function(player: Player, ...)
+		local args = { ... }
+
+		for i, arg in args do
+			local checkFunc = expects[i]
+			if checkFunc == nil then
+				warn("Failed type check: No check func for arg")
+				error("Unprocessed")
+			end
+
+			local success, errorMessage = checkFunc(arg)
+
+			if not success then
+				warn("Failed type check: Check func returned false:", errorMessage)
+				error("Unprocessed")
+			end
+		end
+
+		return callback(player, ...)
+	end
 end
 
 return {

@@ -23,7 +23,8 @@ classes = [
 	"ServerEvent",
 	"ServerFunction",
 	"InstanceManager",
-	"Networking"
+	"Networking",
+	"Arg"
 ]
 
 

@@ -20,23 +20,17 @@ local Toasty = require(path.to.toasty)
 local Net = Toasty.Networking -- Just a shorthand; not required
 
 return {
-	--[[
-		The "Events" and "Functions" tables are REQUIRED at the moment, although
-		this will be changed soon.
-	]]
-	Events = {
-		-- Here we difine a simple event
-		MyEvent = Net.CreateEvent({}, {}),
-	},
-	Functions = {
-		-- And a function
-		MyFunction = Net.CreateFunction({}, {}),
+	-- Here we define a simple event
+	MyEvent = Net.CreateEvent(),
+	
 
-		-- You can create namespaces by just adding a table
-		MyNamespace = {
-			MyNamespacedFunction = Net.CreateFunction({}, {}),
-		}
-	},
+	-- And a function
+	MyFunction = Net.CreateFunction(),
+
+	-- You can create namespaces by just adding a table
+	MyNamespace = {
+		MyNamespacedFunction = Net.CreateFunction(),
+	}
 }
 ```
 
@@ -53,3 +47,7 @@ Toasty.Networking.SetupFromModule(path.to.networking)
 ```
 
 From here to use networking events you can simply require the networking module and access all the events and functions as you would expect.
+
+:::tip
+`SetCallback` and `Fire` (Fire only applies to client firing functions to server) take in an `expects` table which can type check things for you. This is done like this to hide types for clients. It is recommended you use `t` or `Toasty.Networking.Arg.*` however you can create your own.
+:::

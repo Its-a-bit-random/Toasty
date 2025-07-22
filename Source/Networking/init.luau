@@ -133,4 +133,5 @@ return {
 	CreateFunction = CreateFunction,
 
 	SetupFromModule = SetupFromModule,
+	Arg = require(script.Arg)
 }

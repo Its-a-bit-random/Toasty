@@ -5,14 +5,10 @@ Toasty.Networking.SetupFromModule(ReplicatedStorage.Shared.Net)
 
 local Net = require(ReplicatedStorage.Shared.Net)
 
-Net.Events.MyEvent.Client:AddCallback(function(...: any)
-	print(...)
-end)
-
-Net.Events.MyEvent.Client:Fire("Hello", "World")
-
-local prom = Net.Functions.MyFunction.Client:Fire("HelloWorld"):andThen(function(...)
-	print(...)
-end)
-
-print(prom)
+Net.Functions.MyFunction.Client
+	:Fire({
+		Toasty.Networking.Arg.string
+	}, "Hello!")
+	:andThen(function(arg: string)
+		print(arg)
+	end)

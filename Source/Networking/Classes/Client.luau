@@ -1,5 +1,6 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
+local Shared = require(script.Parent.Parent.Shared)
 local Promise = require(ReplicatedStorage.Packages.Promise)
 
 --[=[
@@ -10,8 +11,13 @@ ClientEvent.__index = ClientEvent
 
 export type ClientEvent = {
 	Fire: (self: ClientEvent, ...any) -> (),
-	AddCallback: (self: ClientEvent, callback: (...any) -> ()) -> RBXScriptConnection,
+	SetCallback: (
+		self: ClientEvent,
+		expects: { Shared.TypeCheckFunc },
+		callback: (...any) -> ()
+	) -> RBXScriptConnection,
 	_Instance: RemoteEvent,
+	_CallbackSet: boolean,
 }
 
 --[=[
@@ -22,6 +28,7 @@ export type ClientEvent = {
 ]=]
 function ClientEvent.new(instance: RemoteEvent)
 	local self = setmetatable({}, ClientEvent)
+	self._CallbackSet = false
 	self._Instance = instance
 	return self :: ClientEvent
 end
@@ -38,16 +45,44 @@ function ClientEvent.Fire(self: ClientEvent, ...: any)
 end
 
 --[=[
-	@method AddCallback
+	@method SetCallback
+	@param expects {TypeCheckFunc} -- What is expected from the server
 	@param callback (...any) -> ()
 	@return RBXScriptConnection
 	@within ClientEvent
 
-	Adds a callback to the event. An event can have as many callbacks as you want as
-	well as returing the connection.
+	Sets the callback for the event.
 ]=]
-function ClientEvent.AddCallback(self: ClientEvent, callback: (...any) -> ())
-	return self._Instance.OnClientEvent:Connect(callback)
+function ClientEvent.SetCallback(
+	self: ClientEvent,
+	expects: { Shared.TypeCheckFunc },
+	callback: (player: Player, ...any) -> ()
+)
+	if self._CallbackSet then
+		error("Callback already set")
+		return
+	end
+	self._CallbackSet = true
+	return self._Instance.OnServerEvent:Connect(function(player: Player, ...: any)
+		local args = { ... }
+
+		for i, arg in args do
+			local checkFunc = expects[i]
+			if checkFunc == nil then
+				warn("Failed type check: No check func for arg")
+				error("Unprocessed")
+			end
+
+			local success, errorMessage = checkFunc(arg)
+
+			if not success then
+				warn("Failed type check: Check func returned false:", errorMessage)
+				error("Unprocessed")
+			end
+		end
+
+		callback(player, ...)
+	end)
 end
 
 -------------------------------------------------------------------
@@ -59,9 +94,9 @@ local ClientFunction = {}
 ClientFunction.__index = ClientFunction
 
 export type ClientFunction = {
-	Fire: (self: ClientFunction, ...any) -> Promise.Promise,
-	SetCallback: (self: ClientFunction, callback: (...any) -> ()) -> RBXScriptConnection,
+	Fire: (self: ClientFunction, expects: { Shared.TypeCheckFunc }, ...any) -> Promise.Promise,
 	_Instance: RemoteFunction,
+	_CallbackSet: boolean,
 }
 
 --[=[
@@ -80,12 +115,14 @@ function ClientFunction.new(instance: RemoteFunction)
 		@within ClientFunction
 	]=]
 	self._Instance = instance
+	self._CallbackSet = false
 
 	return self :: ClientFunction
 end
 
 --[=[
 	@method Fire
+	@param expects {TypeCheckFunc} -- What is expected to be returned from the server
 	@param ... any
 	@return Promise
 	@within ClientFunction
@@ -93,23 +130,29 @@ end
 	Invokes the underlying event to the server and wraps it in a promise
 	which resolves with whatever the server returns.
 ]=]
-function ClientFunction.Fire(self: ClientFunction, ...: any)
+function ClientFunction.Fire(self: ClientFunction, expects: { Shared.TypeCheckFunc }, ...: any)
 	local args = { ... }
 	local promise = Promise.new(function(resolve: (...any) -> ())
 		resolve(self._Instance:InvokeServer(table.unpack(args)))
+	end):andThen(function(...: any): ...any
+		local returns = { ... }
+
+		for i, returned in returns do
+			local checkFunc = expects[i]
+			if checkFunc == nil then
+				error("Failed type check: No func for return")
+			end
+
+			local success, errorMessage = checkFunc(returned)
+
+			if not success then
+				error("Failed type check: Check func returned false:", errorMessage)
+			end
+		end
+
+		return table.unpack(returns)
 	end)
 	return promise
-end
-
---[=[
-	@method SetCallback
-	@param callback (...any) -> ()
-	@within ClientFunction
-
-	**sets** the callback to the function, a function can only have **one** callback.
-]=]
-function ClientFunction.SetCallback(self: ClientFunction, callback: (...any) -> ())
-	self._Instance.OnClientInvoke = callback
 end
 
 return {

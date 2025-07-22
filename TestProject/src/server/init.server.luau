@@ -6,12 +6,8 @@ Toasty.Networking.SetupFromModule(ReplicatedStorage.Shared.Net)
 
 local Net = require(ReplicatedStorage.Shared.Net)
 
-Net.Events.MyEvent.Server:AddCallback(function(player, ...: any)
-	print(...)
-	Net.Events.MyEvent.Server:Fire(player, "Hello", "World")
-end)
-
-Net.Functions.MyFunction.Server:SetCallback(function(player: Player, ...: any)
-	local args = { ... }
-	return player.Name .. " " .. table.concat(args, ", ")
+Net.Functions.MyFunction.Server:SetCallback({
+	Toasty.Networking.Arg.string
+}, function(player: Player, myString: string)
+	return `{player} {myString}`
 end)
