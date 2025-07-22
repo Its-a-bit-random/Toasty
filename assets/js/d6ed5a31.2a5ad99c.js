@@ -1,0 +1,1 @@
+"use strict";(self.webpackChunkdocs=self.webpackChunkdocs||[]).push([[1592],{31942:e=>{e.exports=JSON.parse('[{"value":"Types","id":"types","level":2},{"value":"LifecycleHandler","id":"LifecycleHandler","level":3},{"value":"Singleton","id":"Singleton","level":3},{"value":"SingletonOptions","id":"SingletonOptions","level":3}]')}}]);
