@@ -15,4 +15,3 @@ private = true
 
 [dependencies]
 Promise = "lukadev-0/typed-promise@4.0.2"
-Sha256 = "dekkonot/sha256@1.0.1"

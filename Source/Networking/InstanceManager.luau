@@ -1,9 +1,6 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local RunService = game:GetService("RunService")
 
-local Packages = script.Parent.Parent.Parent
-local Sha256 = require(Packages.Sha256)
-
 local RemotesFolder: Folder
 
 if RunService:IsServer() then
@@ -55,10 +52,6 @@ end
 	@within InstanceManager
 ]=]
 local function GetEventServer(name: string, unreliable: boolean)
-	if _G.__TOASTY_OBFUSCATE__ == true then
-		name = Sha256(name)
-	end
-
 	local className = if unreliable then "UnreliableRemoteEvent" else "RemoteEvent"
 	local event = GetFromPath(name, RemotesFolder, className)
 	if event == nil then
@@ -78,10 +71,6 @@ end
 	@within InstanceManager
 ]=]
 local function GetFunctionServer(name: string, unreliable: boolean)
-	if _G.__TOASTY_OBFUSCATE__ == true then
-		name = Sha256(name)
-	end
-
 	local className = if unreliable then "UnreliableRemoteFunction" else "RemoteFunction"
 	local event = GetFromPath(name, RemotesFolder, className)
 	if event == nil then
