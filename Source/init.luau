@@ -55,6 +55,5 @@ return {
 	},
 
 	Bootstrap = require(script.Bootstrap),
-
 	Networking = require(script.Networking),
 }

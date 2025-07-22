@@ -17,12 +17,8 @@ local Singletons: { Types.Singleton } = {}
 	Creates a new singelton
 ]=]
 local function Create(options: Types.SingletonOptions)
-	local newSingleton = {
-		Implements = options.Implements,
-	} :: Types.Singleton
-
+	local newSingleton = options :: Types.Singleton
 	table.insert(Singletons, newSingleton)
-
 	return newSingleton
 end
 
