@@ -13,9 +13,9 @@ To hook into a lifecycle event we need to tell Toasty what lifecycle events we w
 ```lua
 local Toasty = require(path.to.Toasty)
 
-local myAwesomeService = Toasty.Service({
+local myAwesomeService = {
 	Implements = { "OnStart" }
-})
+}
 
 --[[
 	Lifecycles need to have a function with the same name
@@ -24,6 +24,9 @@ local myAwesomeService = Toasty.Service({
 function myAwesomeService:OnStart()
 	print("Hello World!")
 end
+
+Toasty.Service(myAwesomeService)
+return myAwesomeService
 ```
 
 ## Toasty provided events
@@ -33,17 +36,21 @@ end
 `OnStart` is called when you call the `Toasty.Bootstrap.Toast()` function. E.g:
 
 ```lua
-
+-- MyAwesomeService.luau
 local Toasty = require(path.to.Toasty)
 
-local myAwesomeService = Toasty.Service({
+local myAwesomeService = {
 	Implements = { "OnStart" }
-})
+}
 
 function myAwesomeService:OnStart()
 	print("Hello World!")
 end
 
+Toasty.Service(myAwesomeService)
+return myAwesomeService
+
+-- Runtime.server.luau
 Toasty.Bootstrap.Toast() -- would print "Hello World!"
 ```
 
@@ -56,12 +63,12 @@ You should not use OnInit unless you need to use the behavior that it has. Yield
 `OnInit` is called when you call the `Toasty.Bootstrap.Toast()` function but before the `OnStart` lifecycle. E.g:
 
 ```lua
-
+-- MyAwesomeService.luau
 local Toasty = require(path.to.Toasty)
 
-local myAwesomeService = Toasty.Service({
+local myAwesomeService = {
 	Implements = { "OnInit", "OnStart" }
-})
+}
 
 function myAwesomeService:OnStart()
 	print("Start")
@@ -71,6 +78,10 @@ function myAwesomeService:OnInit()
 	print("Init")
 end
 
+Toasty.Service(myAwesomeService)
+return myAwesomeService
+
+-- Runtime.server.luau
 Toasty.Bootstrap.Toast() -- would print "Init" then "Start"
 ```
 
@@ -93,13 +104,16 @@ end)
 -- MyService.luau
 local Toasty = require(path.to.Toasty)
 
-local myAwesomeService = Toasty.Service({
+local myAwesomeService = {
 	Implements = { "OnHeartbeat" }
-})
+}
 
 function myAwesomeService:OnHeartbeat(dt: number)
 	print(dt)
 end
+
+Toasty.Service(myAwesomeService)
+return myAwesomeService
 ```
 
 ### Custom Handlers
@@ -127,11 +141,14 @@ end)
 -- MyService.luau
 local Toasty = require(path.to.Toasty)
 
-local myAwesomeService = Toasty.Service({
+local myAwesomeService = {
 	Implements = { "OnHeartbeat" }
-})
+}
 
 function myAwesomeService:OnHeartbeat(dt: number)
 	print(dt)
 end
+
+Toasty.Service(myAwesomeService)
+return myAwesomeService
 ```

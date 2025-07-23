@@ -12,13 +12,23 @@ A singleton can be considered a `Service` (server) or `Controller` (client). Sin
 local Toasty = require(path.to.Toasty)
 
 -- Server
-local myAwesomeService = Toasty.Service({})
+local myAwesomeService = {}
+
+Toasty.Service(myAwesomeService)
+return myAwesomeService
 
 -- Client
-local myAwesomeController = Toasty.Controller({})
+local myAwesomeController = {}
+
+Toasty.Controller(myAwesomeController)
+return myAwesomeController
 ```
 
 Yep, that's all you need to do to create a singleton, from here you can hook into Lifecycles. The empty table passed is a options table which can be used to configure the singleton like implementing lifecycle.
+
+:::tip
+Although you can create singletons via Toasty it is recommended you do not, and do what above does and define your singleton, then pass it to Toasty via `Service` or `Controller`.
+:::
 
 ## Lifecycle
 

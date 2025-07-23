@@ -22,7 +22,6 @@ local Net = Toasty.Networking -- Just a shorthand; not required
 return {
 	-- Here we define a simple event
 	MyEvent = Net.CreateEvent(),
-	
 
 	-- And a function
 	MyFunction = Net.CreateFunction(),
