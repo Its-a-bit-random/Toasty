@@ -61,16 +61,11 @@ function ClientEvent.SetCallback(
 		return
 	end
 	self._CallbackSet = true
-	return self._Instance.OnServerEvent:Connect(function(player: Player, ...: any)
+	return self._Instance.OnClientEvent:Connect(function(...: any)
 		local args = { ... }
 
-		for i, arg in args do
-			local checkFunc = expects[i]
-			if checkFunc == nil then
-				warn("Failed type check: No check func for arg")
-				error("Unprocessed")
-			end
-
+		for i, checkFunc in expects do
+			local arg = args[i]
 			local success, errorMessage = checkFunc(arg)
 
 			if not success then
@@ -79,7 +74,7 @@ function ClientEvent.SetCallback(
 			end
 		end
 
-		callback(player, ...)
+		callback(...)
 	end)
 end
 
@@ -135,13 +130,9 @@ function ClientFunction.Fire(self: ClientFunction, expects: { Shared.TypeCheckFu
 	end):andThen(function(...: any): ...any
 		local returns = { ... }
 
-		for i, returned in returns do
-			local checkFunc = expects[i]
-			if checkFunc == nil then
-				error("Failed type check: No func for return")
-			end
-
-			local success, errorMessage = checkFunc(returned)
+		for i, checkFunc in expects do
+			local arg = returns[i]
+			local success, errorMessage = checkFunc(arg)
 
 			if not success then
 				error("Failed type check: Check func returned false:", errorMessage)

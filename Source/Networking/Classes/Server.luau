@@ -86,13 +86,8 @@ function ServerEvent.SetCallback(
 	self._Instance.OnServerEvent:Connect(function(player: Player, ...: any)
 		local args = { ... }
 
-		for i, arg in args do
-			local checkFunc = expects[i]
-			if checkFunc == nil then
-				warn("Failed type check: No check func for arg")
-				error("Unprocessed")
-			end
-
+		for i, checkFunc in expects do
+			local arg = args[i]
 			local success, errorMessage = checkFunc(arg)
 
 			if not success then
@@ -161,18 +156,12 @@ function ServerFunction.SetCallback(
 	self._Instance.OnServerInvoke = function(player: Player, ...)
 		local args = { ... }
 
-		for i, arg in args do
-			local checkFunc = expects[i]
-			if checkFunc == nil then
-				warn("Failed type check: No check func for arg")
-				error("Unprocessed")
-			end
-
+		for i, checkFunc in expects do
+			local arg = args[i]
 			local success, errorMessage = checkFunc(arg)
 
 			if not success then
-				warn("Failed type check: Check func returned false:", errorMessage)
-				error("Unprocessed")
+				error("Failed type check: Check func returned false:", errorMessage)
 			end
 		end
 
