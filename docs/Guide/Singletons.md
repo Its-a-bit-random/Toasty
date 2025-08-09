@@ -37,11 +37,14 @@ We can implement lifecycle events by passing the name into the `Implements` tabl
 ```lua
 local Toasty = require(path.to.Toasty)
 
-local myAwesomeService = Toasty.Service({
+local myAwesomeService = {
 	Implements = { "OnStart" }
-})
+}
 
 function myAwesomeService:OnStart()
 	print("Hello World!")
 end
+
+Toasty.Service(myAwesomeService)
+return myAwesomeService
 ```
