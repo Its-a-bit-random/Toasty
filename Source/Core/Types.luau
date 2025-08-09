@@ -18,7 +18,7 @@ export type Singleton = {
 	@within Types
 ]=]
 export type SingletonOptions = {
-	Implements: { string },
+	Implements: { string }?,
 }
 
 --[=[
