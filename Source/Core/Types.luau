@@ -6,6 +6,7 @@
 --[=[
 	@interface Singleton
 	.Implements { string }
+	.Dependencies { Singleton }
 	@within Types
 ]=]
 export type Singleton = {
@@ -15,7 +16,8 @@ export type Singleton = {
 
 --[=[
 	@interface SingletonOptions
-	.Implements { string }
+	.Implements { string }?
+	.Dependencies { Singleton }?
 	@within Types
 ]=]
 export type SingletonOptions = {
