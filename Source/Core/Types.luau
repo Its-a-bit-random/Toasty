@@ -10,6 +10,7 @@
 ]=]
 export type Singleton = {
 	Implements: { string },
+	Dependencies: { Singleton },
 }
 
 --[=[
@@ -19,6 +20,7 @@ export type Singleton = {
 ]=]
 export type SingletonOptions = {
 	Implements: { string }?,
+	Dependencies: { Singleton }?,
 }
 
 --[=[

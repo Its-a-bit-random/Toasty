@@ -1,4 +1,7 @@
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Toasty = script.Parent
+local Util = require(script.Parent.Util)
+local SingletonManager = require(ReplicatedStorage.Packages.Toasty.Core.SingletonManager)
 local LifecycleManager = require(Toasty.Core.LifecycleManager)
 
 --[=[
@@ -29,24 +32,31 @@ end
 	Starts up Toasty by calling dispatching `OnInit` and `OnStart` lifecycles
 ]=]
 local function Toast()
-	local onInit = LifecycleManager.Create("OnInit", function(singletons, name: string, ...: any)
-		for _, v in singletons do
+	local unsortedSingletons = SingletonManager.GetAll()
+	local singletons = Util.Table.TopologicalSort(unsortedSingletons, "Dependencies")
+
+	local onInit = LifecycleManager.Create("OnInit", function(_, name: string, ...: any)
+		for _, v in ipairs(singletons) do
 			local func = v[name]
-			func(v, ...)
+			if typeof(func) == "function" then
+				func(v, ...)
+			end
 		end
 	end)
 	onInit:Dispatch()
 
-	local onStart = LifecycleManager.Create("OnStart", function(singletons, name: string, ...: any)
-		for _, v in singletons do
+	local onStart = LifecycleManager.Create("OnStart", function(_, name: string, ...: any)
+		for _, v in ipairs(singletons) do
 			local func = v[name]
-			task.spawn(func, v, ...)
+			if typeof(func) == "function" then
+				task.spawn(func, v, ...)
+			end
 		end
 	end)
 	onStart:Dispatch()
 end
 
 return {
-	Toast = Toast;
-	LoadModules = LoadModules;
+	Toast = Toast,
+	LoadModules = LoadModules,
 }

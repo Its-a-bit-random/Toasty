@@ -20,6 +20,10 @@ local function Create(options: Types.SingletonOptions)
 	if options.Implements == nil then
 		options.Implements = {}
 	end
+	
+	if options.Dependencies == nil then
+		options.Dependencies = {}
+	end
 
 	local newSingleton = options :: Types.Singleton
 	table.insert(Singletons, newSingleton)
