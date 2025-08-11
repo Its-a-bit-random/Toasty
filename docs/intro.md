@@ -17,7 +17,7 @@ Although Toasty is "Production Ready" it has not yet been battle-tested.
 Add the following to your `wally.toml`
 
 ```toml
-Toasty = "its-a-bit-random/toasty@1.0.0-pre.4"
+Toasty = "its-a-bit-random/toasty@1.0.0-pre.5"
 ```
 
 and run
