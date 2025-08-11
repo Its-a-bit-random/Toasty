@@ -1,7 +1,6 @@
-local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Toasty = script.Parent
-local Util = require(script.Parent.Util)
-local SingletonManager = require(ReplicatedStorage.Packages.Toasty.Core.SingletonManager)
+local Util = require(Toasty.Util)
+local SingletonManager = require(Toasty.Core.SingletonManager)
 local LifecycleManager = require(Toasty.Core.LifecycleManager)
 
 --[=[

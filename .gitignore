@@ -2,3 +2,4 @@ sourcemap.json
 Packages/
 DevPackages/
 *.DS_Store
+Build/

@@ -19,7 +19,7 @@ A powerful Luau game framework inspired by Flamework for Roblox-TS. Toasty is in
 Currently you can only install from wally
 
 ```toml
-Toasty = "its-a-bit-random/wally@1.0.0-pre.4"
+Toasty = "its-a-bit-random/wally@1.0.0-pre.5"
 ```
 ```sh
 wally install
