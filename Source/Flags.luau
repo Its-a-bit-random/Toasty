@@ -22,6 +22,7 @@
 ]=]
 local Flags = {
 	["Verbose"] = "Verbose",
+	["FlatNetworkStructure"] = "FlatNetworkStructure",
 }
 table.freeze(Flags)
 

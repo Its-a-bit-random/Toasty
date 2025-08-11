@@ -1,7 +1,8 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local RunService = game:GetService("RunService")
 
-local Flags = require(ReplicatedStorage.Packages.Toasty.Flags)
+local Flags = require(script.Parent.Parent.Flags)
+local Util = require(script.Parent.Parent.Util)
 
 local RemotesFolder: Folder
 
@@ -14,7 +15,7 @@ else
 	assert(RemotesFolder ~= nil, "Client could not find remotes folder")
 end
 
-local function GetFromPath(path: string, root: Instance, className: string)
+local function GetFromPathNested(path: string, root: Instance, className: string)
 	local splitPath = path:split("/")
 	local instanceName = splitPath[#splitPath]
 
@@ -40,6 +41,33 @@ local function GetFromPath(path: string, root: Instance, className: string)
 	realInstance.Name = instanceName
 	realInstance.Parent = root
 	return realInstance, true
+end
+
+local function GetFromPathFlat(path: string, root: Instance, className: string)
+	local splitPath = path:split("/")
+	local instanceName = splitPath[#splitPath]
+
+	local attribName = "__TOASTY_NET_PATH__"
+	local foundInstance = Util.Attribute.FindFirstChildWithAttribute(root, attribName, path)
+
+	if foundInstance then
+		return foundInstance, false
+	end
+
+	local newInstance = Instance.new(className)
+	newInstance.Name = instanceName
+	newInstance.Parent = root
+	newInstance:SetAttribute(attribName, path)
+
+	return newInstance, true
+end
+
+local function GetFromPath(path: string, root: Instance, className: string)
+	if Flags.IsEnabled(Flags.Flags.FlatNetworkStructure) then
+		return GetFromPathFlat(path, root, className)
+	else
+		return GetFromPathNested(path, root, className)
+	end
 end
 
 --[=[

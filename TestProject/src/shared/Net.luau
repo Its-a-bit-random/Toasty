@@ -8,4 +8,11 @@ return {
 	URE = Net.UnreliableEvent(),
 	RF = Net.Function(),
 	URF = Net.UnreliableFunction(),
+
+	NestedStuff = {
+		RE = Net.Event(),
+		URE = Net.UnreliableEvent(),
+		RF = Net.Function(),
+		URF = Net.UnreliableFunction(),
+	},
 }
