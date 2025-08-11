@@ -46,6 +46,12 @@ local LifecycleManager = require(script.Core.LifecycleManager)
 	@within Toasty
 ]=]
 
+--[=[
+	@prop Flags Flags
+	@readonly
+	@within Toasty
+]=]
+
 return {
 	Service = SingletonManager.Create,
 	Controller = SingletonManager.Create,
@@ -56,4 +62,5 @@ return {
 
 	Bootstrap = require(script.Bootstrap),
 	Networking = require(script.Networking),
+	Flags = require(script.Flags),
 }
