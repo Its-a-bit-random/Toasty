@@ -8,10 +8,6 @@ Toasty comes with a networking system. Currently it only wraps around the normal
 
 ## Getting Started
 
-:::warning
-Networking is subject to breaking changes constantly pre-1.0.0
-:::
-
 You first need to create your `Networking` module. This is where you define all your events and functions. Here is an example:
 
 ```lua
@@ -33,16 +29,16 @@ return {
 }
 ```
 
-Once your networking module is ready you need to load it via toasty on **both** the client and the server:
+Once your networking module is ready you need to set it up on **both** the client and the server:
 
 ```lua
 -- Server/Main.server.luau
 local Toasty = require(path.to.toasty)
-Toasty.Networking.SetupFromModule(path.to.networking)
+Toasty.Networking.Setup(path.to.networking)
 
 -- Client/Main.client.luau
 local Toasty = require(path.to.toasty)
-Toasty.Networking.SetupFromModule(path.to.networking)
+Toasty.Networking.Setup(path.to.networking)
 ```
 
 From here to use networking events you can simply require the networking module and access all the events and functions as you would expect.

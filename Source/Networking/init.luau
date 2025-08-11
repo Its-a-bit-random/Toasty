@@ -107,21 +107,31 @@ local function ParseEvents(key: string, events: { { Shared.EventTable } | Shared
 	end
 end
 
+
 --[=[
-	@function SetupFromModule
+	@function Setup
 	@param module ModuleScript
 	@within Networking
 
 	Takes in a module script that contains a table of events and functions and conerts
 	it into objects.
-
-	:::warning
-	This is temporary and the need for this will be removed eventually.
-	:::
 ]=]
-local function SetupFromModule(module: ModuleScript)
-	local table = require(module) :: Shared.NetworkingTable
-	ParseEvents("", table)
+local function Setup(module: ModuleScript)
+	ParseEvents("", require(module))
+end
+
+--[=[
+	@function SetupFromModule
+	@param module ModuleScript
+	@deprecated v1.0.0 -- Use `.Setup()` instead
+	@within Networking
+
+	Takes in a module script that contains a table of events and functions and conerts
+	it into objects.
+]=]
+local function SetupFromModule(_module: ModuleScript)
+	warn(".SetupFromModule() is deprecated; please use .Setup() instead")
+	Setup(_module)
 end
 
 return {
@@ -129,5 +139,7 @@ return {
 	CreateFunction = CreateFunction,
 
 	SetupFromModule = SetupFromModule,
+	Setup = SetupFromModule,
+
 	Arg = require(script.Arg),
 }
