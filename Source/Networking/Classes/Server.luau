@@ -117,17 +117,17 @@ export type ServerFunction = {
 		expects: { Shared.TypeCheckFunc },
 		callback: (player: Player, ...any) -> ()
 	) -> RBXScriptConnection,
-	_Instance: RemoteFunction,
+	_Instance: RemoteEvent,
 	_CallbackSet: boolean,
 }
 
 --[=[
 	@function new
-	@param instance RemoteFunction
+	@param instance RemoteEvent
 	@return ServerFunction
 	@within ServerFunction
 ]=]
-function ServerFunction.new(instance: RemoteFunction)
+function ServerFunction.new(instance: RemoteEvent)
 	local self = setmetatable({}, ServerFunction)
 	self._Instance = instance
 	self._CallbackSet = false
@@ -153,7 +153,7 @@ function ServerFunction.SetCallback(
 	end
 
 	self._CallbackSet = true
-	self._Instance.OnServerInvoke = function(player: Player, ...)
+	self._Instance.OnServerEvent:Connect(function(player: Player, id: string, ...)
 		local args = { ... }
 
 		for i, checkFunc in expects do
@@ -165,8 +165,8 @@ function ServerFunction.SetCallback(
 			end
 		end
 
-		return callback(player, ...)
-	end
+		self._Instance:FireClient(player, id, callback(player, ...))
+	end)
 end
 
 return {

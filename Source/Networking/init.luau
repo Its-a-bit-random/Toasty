@@ -27,16 +27,14 @@ local ClientClasses = require(script.Classes.Client)
 ]=]
 
 --[=[
-	@function CreateEvent
-	@param inputs {TypeCheckFunc}
-	@param outputs {TypeCheckFunc}
+	@function Event
 	@return EventReturn
 	@within Networking
 
-	Create an event with given inputs and outputs that will be automatically type
-	checked by Toasty.
+	Create an event which allows for one-way communication between the server and
+	client(s).
 ]=]
-local function CreateEvent()
+local function Event()
 	local tbl = {
 		Instance = Shared.EventMarker,
 	} :: any
@@ -44,18 +42,46 @@ local function CreateEvent()
 end
 
 --[=[
-	@function CreateFunction
-	@param inputs {TypeCheckFunc}
-	@param outputs {TypeCheckFunc}
+	@function UnreliableEvent
+	@return EventReturn
+	@within Networking
+
+	Create an event which allows for one-way communication between the server and
+	client(s).
+]=]
+local function UnreliableEvent()
+	local tbl = {
+		Instance = Shared.UnreliableEventMarker,
+	} :: any
+	return tbl :: { Client: ClientClasses.ClientEvent, Server: ServerClasses.ServerEvent }
+end
+
+--[=[
+	@function Function
 	@return FunctionReturn
 	@within Networking
 
-	Create a function with given inputs and outputs that will be automatically type
-	checked by Toasty.
+	Create an event which allows for two-way communication between the server and
+	client(s).
 ]=]
-local function CreateFunction()
+local function Function()
 	local tbl = {
 		Instance = Shared.FunctionMarker,
+	} :: any
+	return tbl :: { Client: ClientClasses.ClientFunction, Server: ServerClasses.ServerFunction }
+end
+
+--[=[
+	@function UnreliableFunction
+	@return FunctionReturn
+	@within Networking
+
+	Create an event which allows for two-way communication between the server and
+	client(s).
+]=]
+local function UnreliableFunction()
+	local tbl = {
+		Instance = Shared.UnreliableFunctionMarker,
 	} :: any
 	return tbl :: { Client: ClientClasses.ClientFunction, Server: ServerClasses.ServerFunction }
 end
@@ -84,9 +110,25 @@ local function ParseEvents(key: string, events: { { Shared.EventTable } | Shared
 				local inst = InstanceManager.GetEventServer(key, false)
 				retypedEvents.Client = ClientClasses.ClientEvent(inst)
 			end
+		elseif retypedEvents.Instance == Shared.UnreliableEventMarker then
+			if RunService:IsServer() then
+				local inst = InstanceManager.GetEventServer(key, true)
+				retypedEvents.Server = ServerClasses.ServerEvent(inst)
+			else
+				local inst = InstanceManager.GetEventClient(key)
+				retypedEvents.Client = ClientClasses.ClientEvent(inst)
+			end
 		elseif retypedEvents.Instance == Shared.FunctionMarker then
 			if RunService:IsServer() then
 				local inst = InstanceManager.GetFunctionServer(key, false)
+				retypedEvents.Server = ServerClasses.ServerFunction(inst)
+			else
+				local inst = InstanceManager.GetFunctionClient(key)
+				retypedEvents.Client = ClientClasses.ClientFunction(inst)
+			end
+		elseif retypedEvents.Instance == Shared.UnreliableFunctionMarker then
+			if RunService:IsServer() then
+				local inst = InstanceManager.GetFunctionServer(key, true)
 				retypedEvents.Server = ServerClasses.ServerFunction(inst)
 			else
 				local inst = InstanceManager.GetFunctionClient(key)
@@ -106,7 +148,6 @@ local function ParseEvents(key: string, events: { { Shared.EventTable } | Shared
 		end
 	end
 end
-
 
 --[=[
 	@function Setup
@@ -135,11 +176,13 @@ local function SetupFromModule(_module: ModuleScript)
 end
 
 return {
-	CreateEvent = CreateEvent,
-	CreateFunction = CreateFunction,
+	Event = Event,
+	Function = Function,
+	UnreliableEvent = UnreliableEvent,
+	UnreliableFunction = UnreliableFunction,
 
 	SetupFromModule = SetupFromModule,
-	Setup = SetupFromModule,
+	Setup = Setup,
 
 	Arg = require(script.Arg),
 }

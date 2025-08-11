@@ -88,21 +88,21 @@ ClientFunction.__index = ClientFunction
 
 export type ClientFunction = {
 	Fire: (self: ClientFunction, expects: { Shared.TypeCheckFunc }, ...any) -> Promise.Promise,
-	_Instance: RemoteFunction,
+	_Instance: RemoteEvent,
 	_CallbackSet: boolean,
 }
 
 --[=[
 	@function new
-	@param instance RemoteFunction
+	@param instance RemoteEvent
 	@return ClientFunction
 	@within ClientFunction
 ]=]
-function ClientFunction.new(instance: RemoteFunction)
+function ClientFunction.new(instance: RemoteEvent)
 	local self = setmetatable({}, ClientFunction)
 
 	--[=[
-		@prop _Instance RemoteFunction
+		@prop _Instance RemoteEvent
 		@private
 		@readonly
 		@within ClientFunction
@@ -125,8 +125,21 @@ end
 ]=]
 function ClientFunction.Fire(self: ClientFunction, expects: { Shared.TypeCheckFunc }, ...: any)
 	local args = { ... }
-	local promise = Promise.new(function(resolve: (...any) -> ())
-		resolve(self._Instance:InvokeServer(table.unpack(args)))
+	return Promise.new(function(resolve: (...any) -> (), _, onCancel)
+		local requestId = Shared.GenerateRequestID()
+		self._Instance:FireServer(requestId, table.unpack(args))
+
+		local conn
+		conn = self._Instance.OnClientEvent:Connect(function(id: string, ...)
+			if id == requestId then
+				conn:Disconnect()
+				resolve(...)
+			end
+		end)
+
+		onCancel(function()
+			conn:Disconnect()
+		end)
 	end):andThen(function(...: any): ...any
 		local returns = { ... }
 
@@ -141,7 +154,6 @@ function ClientFunction.Fire(self: ClientFunction, expects: { Shared.TypeCheckFu
 
 		return table.unpack(returns)
 	end)
-	return promise
 end
 
 return {

@@ -15,7 +15,7 @@ end
 local function GetFromPath(path: string, root: Instance, className: string)
 	local splitPath = path:split("/")
 	local instanceName = splitPath[#splitPath]
-	
+
 	for i = 1, #splitPath - 1, 1 do
 		local child = splitPath[i]
 		local childInstance = root:FindFirstChild(child)
@@ -71,14 +71,7 @@ end
 	@within InstanceManager
 ]=]
 local function GetFunctionServer(name: string, unreliable: boolean)
-	local className = if unreliable then "UnreliableRemoteFunction" else "RemoteFunction"
-	local event = GetFromPath(name, RemotesFolder, className)
-	if event == nil then
-		event = Instance.new(className)
-		event.Name = name
-		event.Parent = RemotesFolder
-	end
-
+	local event = GetEventServer(name, unreliable)
 	return event :: RemoteFunction
 end
 

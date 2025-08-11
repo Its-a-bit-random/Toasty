@@ -2,13 +2,28 @@
 	"name": "ToastyServe",
 	"tree": {
 		"$className": "DataModel",
-
 		"ReplicatedStorage": {
 			"$className": "ReplicatedStorage",
 			"Packages": {
 				"$path": "Packages",
 				"Toasty": {
 					"$path": "Source"
+				}
+			},
+			"Shared": {
+				"$path": "TestProject/src/shared"
+			}
+		},
+		"ServerScriptService": {
+			"TEST": {
+				"$path": "TestProject/src/server"
+			}
+		},
+		"StarterPlayer": {
+			"$className": "StarterPlayer",
+			"StarterPlayerScripts": {
+				"TEST": {
+					"$path": "TestProject/src/client"
 				}
 			}
 		}

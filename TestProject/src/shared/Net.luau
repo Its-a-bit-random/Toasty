@@ -4,10 +4,8 @@ local Toasty = require(ReplicatedStorage.Packages.Toasty)
 local Net = Toasty.Networking
 
 return {
-	Events = {
-		MyEvent = Net.CreateEvent({}, {}),
-	},
-	Functions = {
-		MyFunction = Net.CreateFunction({}, {}),
-	},
+	RE = Net.Event(),
+	URE = Net.UnreliableEvent(),
+	RF = Net.Function(),
+	URF = Net.UnreliableFunction(),
 }

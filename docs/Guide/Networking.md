@@ -4,7 +4,13 @@ sidebar_position: 4
 
 # Networking
 
-Toasty comes with a networking system. Currently it only wraps around the normal remote events and remote functions provided by Roblox with minimally more features however it will soon be expanded for middleware and automatic type checking.
+:::warning
+As of 1.0.0, toasty sends 12 bytes (a string) with every remote call, this will be eventually removed.
+:::
+
+## Theory
+
+Toasty only uses Remote events under the hood. This is because Roblox does not have a `UnreliableRemoteFunction`, sicne Toasty networking supports this it replicated the behaviour of `RemoteFunctions` using `RemoteEvents`. This is similar to how Flamework handles remote functions but the implementation may not be the same.
 
 ## Getting Started
 
@@ -17,14 +23,14 @@ local Net = Toasty.Networking -- Just a shorthand; not required
 
 return {
 	-- Here we define a simple event
-	MyEvent = Net.CreateEvent(),
+	MyEvent = Net.Event(),
 
 	-- And a function
-	MyFunction = Net.CreateFunction(),
+	MyFunction = Net.Function(),
 
 	-- You can create namespaces by just adding a table
 	MyNamespace = {
-		MyNamespacedFunction = Net.CreateFunction(),
+		MyNamespacedFunction = Net.Function(),
 	}
 }
 ```
