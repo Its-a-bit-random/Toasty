@@ -2,8 +2,10 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local Toasty = require(ReplicatedStorage.Packages.Toasty)
 Toasty.Flags.Enable(Toasty.Flags.Flags.FlatNetworkStructure)
+
 Toasty.Networking.Setup(ReplicatedStorage.Shared.Net)
-Toasty.Bootstrap.LoadModules(script.Services, true)
+Toasty.Bootstrap.LoadSingletonModules(script.Services, true)
+
 Toasty.Bootstrap.Toast()
 
 local Net = require(ReplicatedStorage.Shared.Net)

@@ -27,6 +27,27 @@ local function LoadModules(parent: Instance, recursive: boolean)
 end
 
 --[=[
+	@function LoadSingletonModules
+	@within Bootstrap
+	@param parent Instance
+	@param recursive boolean
+
+	Calls require on all [ModuleScript] instances parented under the passed parant. It also
+	creates singletons for every module meaning you can use this to avoid having to write
+	`Toasty.Service()`/`Toasty.Controller()` in every module.
+]=]
+local function LoadSingletonModules(parent: Instance, recursive: boolean)
+	local possibleModules = if recursive then parent:GetDescendants() else parent:GetChildren()
+
+	for _, module: Instance in possibleModules do
+		if module:IsA("ModuleScript") then
+			local singleton = require(module)
+			SingletonManager.Create(singleton)
+		end
+	end
+end
+
+--[=[
 	@function Toast
 	@within Bootstrap
 	Starts up Toasty by calling dispatching `OnInit` and `OnStart` lifecycles
@@ -91,4 +112,5 @@ end
 return {
 	Toast = Toast,
 	LoadModules = LoadModules,
+	LoadSingletonModules = LoadSingletonModules,
 }

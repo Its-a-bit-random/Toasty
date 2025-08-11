@@ -1,8 +1,6 @@
-local Toasty = require(game:GetService("ReplicatedStorage").Packages.Toasty)
-
-local myService = Toasty.Service({
+local myService = {
 	Implements = { "OnStart" },
-})
+}
 
 function myService:OnStart(...)
 	local args = { ... }
