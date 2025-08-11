@@ -1,6 +1,8 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local RunService = game:GetService("RunService")
 
+local Flags = require(ReplicatedStorage.Packages.Toasty.Flags)
+
 local RemotesFolder: Folder
 
 if RunService:IsServer() then
@@ -58,6 +60,10 @@ local function GetEventServer(name: string, unreliable: boolean)
 		event = Instance.new(className)
 		event.Name = name
 		event.Parent = RemotesFolder
+
+		if Flags.IsEnabled(Flags.Flags.Verbose) then
+			print("[TOASTY::NETWORKING]", "Created", className)
+		end
 	end
 
 	return event :: RemoteEvent

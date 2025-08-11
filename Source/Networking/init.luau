@@ -3,6 +3,7 @@ local RunService = game:GetService("RunService")
 local Shared = require(script.Shared)
 local InstanceManager = require(script.InstanceManager)
 local Util = require(script.Parent.Util)
+local Flags = require(script.Parent.Flags)
 
 local ServerClasses = require(script.Classes.Server)
 local ClientClasses = require(script.Classes.Client)
@@ -38,6 +39,9 @@ local function Event()
 	local tbl = {
 		Instance = Shared.EventMarker,
 	} :: any
+	if Flags.IsEnabled(Flags.Flags.Verbose) then
+		print("[TOASTY::NETWORKING]", "Created event marker")
+	end
 	return tbl :: { Client: ClientClasses.ClientEvent, Server: ServerClasses.ServerEvent }
 end
 
@@ -53,6 +57,9 @@ local function UnreliableEvent()
 	local tbl = {
 		Instance = Shared.UnreliableEventMarker,
 	} :: any
+	if Flags.IsEnabled(Flags.Flags.Verbose) then
+		print("[TOASTY::NETWORKING]", "Created unreliable event marker")
+	end
 	return tbl :: { Client: ClientClasses.ClientEvent, Server: ServerClasses.ServerEvent }
 end
 
@@ -68,6 +75,9 @@ local function Function()
 	local tbl = {
 		Instance = Shared.FunctionMarker,
 	} :: any
+	if Flags.IsEnabled(Flags.Flags.Verbose) then
+		print("[TOASTY::NETWORKING]", "Created function marker")
+	end
 	return tbl :: { Client: ClientClasses.ClientFunction, Server: ServerClasses.ServerFunction }
 end
 
@@ -83,6 +93,9 @@ local function UnreliableFunction()
 	local tbl = {
 		Instance = Shared.UnreliableFunctionMarker,
 	} :: any
+	if Flags.IsEnabled(Flags.Flags.Verbose) then
+		print("[TOASTY::NETWORKING]", "Created unreliable function marker")
+	end
 	return tbl :: { Client: ClientClasses.ClientFunction, Server: ServerClasses.ServerFunction }
 end
 
@@ -158,7 +171,15 @@ end
 	it into objects.
 ]=]
 local function Setup(module: ModuleScript)
+	if Flags.IsEnabled(Flags.Flags.Verbose) then
+		print("[TOASTY::NETWORKING]", "Setting up networking")
+	end
+
 	ParseEvents("", require(module))
+
+	if Flags.IsEnabled(Flags.Flags.Verbose) then
+		print("[TOASTY::NETWORKING]", "Networking ready")
+	end
 end
 
 --[=[

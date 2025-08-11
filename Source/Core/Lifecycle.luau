@@ -1,5 +1,6 @@
 local Core = script.Parent
 local Types = require(Core.Types)
+local Flags = require(Core.Parent.Flags)
 
 local SingletonManagerModule = require(Core.SingletonManager)
 local GetAll = SingletonManagerModule.GetAll
@@ -35,6 +36,10 @@ Lifecycle.__index = Lifecycle
 function Lifecycle.new(name: string, handler: Types.LifecycleHandler)
 	local self = setmetatable({}, Lifecycle)
 
+	if Flags.IsEnabled(Flags.Flags.Verbose) then
+		print("[TOASTY]", `Creating new lifecycle with name {name}`)
+	end
+
 	--[=[
 		@readonly
 		@prop Name string
@@ -67,6 +72,11 @@ end
 ]=]
 function Lifecycle.Dispatch(self: Types.Lifecycle, ...: any)
 	local singletons = GetSingletonsWhichImplement(self.Name)
+
+	if Flags.IsEnabled(Flags.Flags.Verbose) then
+		print("[TOASTY]", `Dispatching lifecycle with name {self.Name} to {#singletons} singletons`)
+	end
+
 	self._OnDispatch(singletons, self.Name, ...)
 end
 

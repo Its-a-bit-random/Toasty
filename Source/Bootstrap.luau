@@ -1,4 +1,5 @@
 local Toasty = script.Parent
+local Flags = require(script.Parent.Flags)
 local Util = require(Toasty.Util)
 local SingletonManager = require(Toasty.Core.SingletonManager)
 local LifecycleManager = require(Toasty.Core.LifecycleManager)
@@ -34,25 +35,57 @@ local function Toast()
 	local unsortedSingletons = SingletonManager.GetAll()
 	local singletons = Util.Table.TopologicalSort(unsortedSingletons, "Dependencies")
 
-	local onInit = LifecycleManager.Create("OnInit", function(_, name: string, ...: any)
+	if Flags.IsEnabled(Flags.Flags.Verbose) then
+		local order = {}
 		for _, v in ipairs(singletons) do
+			table.insert(order, v)
+			table.insert(order, "->")
+		end
+		print("[TOASTY]", "Sorted singletons to init + start in order \n", table.unpack(order))
+	end
+
+	local onInit = LifecycleManager.Create("OnInit", function(_, name: string, ...: any)
+		for i, v in ipairs(singletons) do
 			local func = v[name]
 			if typeof(func) == "function" then
 				func(v, ...)
+				if Flags.IsEnabled(Flags.Flags.Verbose) then
+					print("[TOASTY]", `{i} / {#singletons}`)
+				end
 			end
 		end
 	end)
+	if Flags.IsEnabled(Flags.Flags.Verbose) then
+		print(string.rep("=", 50))
+		print("[TOASTY]", "INITIALIZING SINGLETONS")
+	end
 	onInit:Dispatch()
+	if Flags.IsEnabled(Flags.Flags.Verbose) then
+		print(string.rep("=", 50))
+	end
 
 	local onStart = LifecycleManager.Create("OnStart", function(_, name: string, ...: any)
-		for _, v in ipairs(singletons) do
+		for i, v in ipairs(singletons) do
 			local func = v[name]
 			if typeof(func) == "function" then
-				task.spawn(func, v, ...)
+				local args = { ... }
+				task.spawn(function()
+					func(v, table.unpack(args))
+					if Flags.IsEnabled(Flags.Flags.Verbose) then
+						print("[TOASTY]", `{i} / {#singletons}`)
+					end
+				end)
 			end
 		end
 	end)
+	if Flags.IsEnabled(Flags.Flags.Verbose) then
+		print(string.rep("=", 50))
+		print("[TOASTY]", "INITIALIZING SINGLETONS")
+	end
 	onStart:Dispatch()
+	if Flags.IsEnabled(Flags.Flags.Verbose) then
+		print(string.rep("=", 50))
+	end
 end
 
 return {

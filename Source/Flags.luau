@@ -21,8 +21,9 @@
 	@within Flags
 ]=]
 local Flags = {
-	"Verbose",
+	["Verbose"] = "Verbose",
 }
+table.freeze(Flags)
 
 local function CreateGlobalKey(str: string)
 	local PREFIX = "__TOASTY_"
@@ -63,5 +64,5 @@ return {
 	Enable = Enable,
 	Disable = Disable,
 	IsEnabled = IsEnabled,
-	Flags = table.freeze(Flags),
+	Flags = Flags,
 }

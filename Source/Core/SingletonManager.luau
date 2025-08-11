@@ -1,5 +1,6 @@
 local Core = script.Parent
 local Types = require(Core.Types)
+local Flags = require(script.Parent.Parent.Flags)
 
 local Singletons: { Types.Singleton } = {}
 
@@ -20,13 +21,16 @@ local function Create(options: Types.SingletonOptions)
 	if options.Implements == nil then
 		options.Implements = {}
 	end
-	
+
 	if options.Dependencies == nil then
 		options.Dependencies = {}
 	end
 
 	local newSingleton = options :: Types.Singleton
 	table.insert(Singletons, newSingleton)
+	if Flags.IsEnabled(Flags.Flags.Verbose) then
+		print("[TOASTY]", "Registered new singleton")
+	end
 	return newSingleton
 end
 
