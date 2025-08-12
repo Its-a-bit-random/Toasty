@@ -1,0 +1,30 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+  
+jobs:
+  build:
+    name: Upload Release Asset
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Install Rokit
+        uses: CompeyDev/setup-rokit@v0.1.2
+      - name: Wally install
+        run: |
+          wally install
+      - name: Build model file
+        run: |
+          rojo build publish.project.json -o Toasty.rbxl
+      - name: Release
+        uses: softprops/action-gh-release@v1
+        with:
+          name: Release
+          draft: true
+          fail_on_unmatched_files: true
+          files: |
+            Toasty.rbxm

@@ -1,0 +1,9 @@
+{
+	"name": "ToastyPublish",
+	"tree": {
+		"$path": "Packages/",
+		"Toasty": {
+			"$path": "Source"
+		}
+	}
+}

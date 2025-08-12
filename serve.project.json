@@ -5,10 +5,7 @@
 		"ReplicatedStorage": {
 			"$className": "ReplicatedStorage",
 			"Packages": {
-				"$path": "Packages",
-				"Toasty": {
-					"$path": "Source"
-				}
+				"$path": "./Publish.project.json"
 			},
 			"Shared": {
 				"$path": "TestProject/src/shared"
