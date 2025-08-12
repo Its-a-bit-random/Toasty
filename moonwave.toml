@@ -24,7 +24,8 @@ classes = [
 	"ServerFunction",
 	"InstanceManager",
 	"Networking",
-	"Arg"
+	"Arg",
+	"Connection"
 ]
 
 

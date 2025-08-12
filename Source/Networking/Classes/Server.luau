@@ -1,6 +1,7 @@
 local Players = game:GetService("Players")
 
 local Shared = require(script.Parent.Parent.Shared)
+local Connection = require(script.Parent.Connection)
 
 --[=[
 	@class ServerEvent
@@ -16,11 +17,11 @@ export type ServerEvent = {
 		self: ServerEvent,
 		expects: { Shared.TypeCheckFunc },
 		callback: (player: Player, ...any) -> ()
-	) -> RBXScriptConnection,
+	) -> Connection.Connection,
 	Predict: (self: ServerEvent, player: Player, ...any) -> (),
 	_Instance: RemoteEvent,
 	_CallbackSet: boolean,
-	_Callback: (...any) -> (),
+	_Callback: (...any) -> ()?,
 }
 
 --[=[
@@ -71,6 +72,7 @@ end
 	@method SetCallback
 	@param expects {TypeCheckFunc} -- What is expected from the client
 	@param callback (player: Player, ...any) -> ()
+	@return Connection
 	@within ServerEvent
 
 	Sets the callback for the event.
@@ -101,9 +103,18 @@ function ServerEvent.SetCallback(
 		callback(player, ...)
 	end
 
-	self._Instance.OnServerEvent:Connect(function(...: any)
+	local robloxConn = self._Instance.OnServerEvent:Connect(function(...: any)
 		self:Predict(...)
 	end)
+
+	local wrapped = Connection.Connection(robloxConn)
+
+	wrapped._Disconnectd:Connect(function()
+		self._CallbackSet = false
+		self._Callback = nil
+	end)
+
+	return wrapped
 end
 
 --[=[
@@ -139,10 +150,10 @@ export type ServerFunction = {
 		self: ServerEvent,
 		expects: { Shared.TypeCheckFunc },
 		callback: (player: Player, ...any) -> ()
-	) -> RBXScriptConnection,
+	) -> Connection.Connection,
 	_Instance: RemoteEvent,
 	_CallbackSet: boolean,
-	_Callback: (...any) -> (),
+	_Callback: (...any) -> ()?,
 }
 
 --[=[
@@ -162,6 +173,7 @@ end
 	@method SetCallback
 	@param expects {TypeCheckFunc} -- What is expected from the client
 	@param callback (player: Player, ...any) -> ()
+	@return Connection
 	@within ServerFunction
 
 	Sets the callback for the event.
@@ -192,9 +204,22 @@ function ServerFunction.SetCallback(
 		return callback(player, ...)
 	end
 
-	return self._Instance.OnServerEvent:Connect(function(player, id, ...)
+	local robloxConn = self._Instance.OnServerEvent:Connect(function(player, id, ...)
+		if self._Callback == nil then
+			warn("No callback set")
+			return
+		end
 		self._Instance:FireClient(player, id, self._Callback(player, ...))
 	end)
+
+	local wrapped = Connection.Connection(robloxConn)
+
+	wrapped._Disconnectd:Once(function()
+		self._CallbackSet = false
+		self._Callback = nil
+	end)
+
+	return wrapped
 end
 
 --[=[
@@ -206,7 +231,12 @@ end
 	Fire a function from the server to the server as a player.
 ]=]
 function ServerFunction.Predict(self: ServerFunction, player: Player, ...: any)
-	return self._Callback(player, ...)
+	if self._Callback then
+		return self._Callback(player, ...)
+	else
+		warn("No callback set")
+		return nil
+	end
 end
 
 return {

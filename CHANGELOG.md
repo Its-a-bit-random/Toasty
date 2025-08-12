@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+* Added proper disconnection to networking
 * Added predicts to networking
 * Complete rewrite of documentation
 * Added new bootstrap function to automatiaclly call `Toasty.Service()` or `Toasty.Controller()` for you

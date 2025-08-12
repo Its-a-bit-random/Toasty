@@ -1,5 +1,6 @@
 local Shared = require(script.Parent.Parent.Shared)
 local Promise = require(script.Parent.Parent.Parent.Parent.Promise)
+local Connection = require(script.Parent.Connection)
 
 --[=[
 	@class ClientEvent
@@ -13,7 +14,7 @@ export type ClientEvent = {
 		self: ClientEvent,
 		expects: { Shared.TypeCheckFunc },
 		callback: (...any) -> ()
-	) -> RBXScriptConnection,
+	) -> Connection.Connection,
 	Predict: (self: ClientEvent, ...any) -> (),
 	_Instance: RemoteEvent,
 	_CallbackSet: boolean,
@@ -48,7 +49,7 @@ end
 	@method SetCallback
 	@param expects {TypeCheckFunc} -- What is expected from the server
 	@param callback (...any) -> ()
-	@return RBXScriptConnection
+	@return Connection
 	@within ClientEvent
 
 	Sets the callback for the event.
@@ -79,9 +80,18 @@ function ClientEvent.SetCallback(
 		callback(...)
 	end
 
-	return self._Instance.OnClientEvent:Connect(function(...)
+	local robloxConn = self._Instance.OnClientEvent:Connect(function(...)
 		self:Predict(...)
 	end)
+
+	local wrapped = Connection.Connection(robloxConn)
+
+	wrapped._Disconnectd:Connect(function()
+		self._CallbackSet = false
+		self._Callback = nil
+	end)
+
+	return wrapped
 end
 
 --[=[
