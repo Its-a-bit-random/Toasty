@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+* Fixed ServerFunction type
 * Added proper disconnection to networking
 * Added predicts to networking
 * Complete rewrite of documentation

@@ -147,7 +147,7 @@ export type ServerFunction = {
 	Broadcast: (self: ServerFunction, ...any) -> (),
 	Predict: (self: ServerFunction, player: Player, ...any) -> (),
 	SetCallback: (
-		self: ServerEvent,
+		self: ServerFunction,
 		expects: { Shared.TypeCheckFunc },
 		callback: (player: Player, ...any) -> ()
 	) -> Connection.Connection,
