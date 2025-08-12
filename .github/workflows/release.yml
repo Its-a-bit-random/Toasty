@@ -19,7 +19,7 @@ jobs:
           wally install
       - name: Build model file
         run: |
-          rojo build publish.project.json -o Toasty.rbxl
+          rojo build publish.project.json -o Toasty.rbxm
       - name: Release
         uses: softprops/action-gh-release@v1
         with:
