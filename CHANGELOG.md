@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+## 1.0.0
+
 * Fixed ServerFunction type
 * Added proper disconnection to networking
 * Added predicts to networking
