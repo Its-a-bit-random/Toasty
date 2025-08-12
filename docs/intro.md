@@ -8,10 +8,6 @@ Luau game framework inspired by `Flamework` for Roblox-TS.
 
 ## Installing
 
-:::warning
-Although Toasty is "Production Ready" it has not yet been battle-tested.
-:::
-
 ### Wally
 
 Add the following to your `wally.toml`
@@ -25,3 +21,7 @@ and run
 ```sh
 wally install
 ```
+
+:::tip
+If this is your first time using Toasty, please read through all of the docs. This will allow you to take full advantage of Toasty.
+:::

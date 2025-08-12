@@ -32,6 +32,45 @@ local LifecycleManager = require(script.Core.LifecycleManager)
 	@within Toasty
 
 	Create a new lifecycle event via the [LifecycleManager]
+
+
+	Here is am exmaple of a custom `OnHeartbeat` lifecycle
+	
+	```lua
+	-- Services/HeartbeatLifecycleService
+	local RunService = game:GetService("RunService")
+	local Toasty = require(path.to.Toasty)
+		
+	local HeartbeatLifecycleService = {
+		Implements = { "OnStart" }
+	}
+		
+	function HeartbeatLifecycleService:OnStart()
+		local heartbeatLifecycle = Toasty.Lifecycle.Create("OnHeartbeat")
+	
+		RunService.Heartbeat:Connect(function(deltaTime)
+			heartbeatLifecycle:Dispatch(deltaTime)
+		end)
+	end
+	
+	return HeartbeatLifecycleService
+
+	
+	-- Services/MyService.luau
+	local MyFirstService = {
+		Implements = { "OnHeartbeat" };
+	}
+
+	--[[
+		Add in the function wich gets called when the lifecycle
+		is dispatched
+	]]
+	function MyFirstService:OnHeartbeat(deltaTime: number)
+		print("Heartbeat, dt =", deltaTime)
+	end
+
+	return MyFirstService
+	```
 ]=]
 
 --[=[

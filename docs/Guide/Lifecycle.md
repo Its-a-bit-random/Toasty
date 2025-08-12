@@ -4,151 +4,61 @@ sidebar_position: 3
 
 # Lifecycle
 
-Lifecycle events allow you to listen in to certain events from Toasty or by creating your own.
+In the example service given in the "Hello World" page you might have noticed a table called "Implements". By default Toasty comes with OnInit and OnStart, ghis is where Toasty becomes really powerful, you can create and implement your own lifecycle functionss.
 
-## Hooking into lifecycle events
+Lets create our own OnHeartbeat lifecycle and add it to our service from before.
 
-To hook into a lifecycle event we need to tell Toasty what lifecycle events we would like to have on the service. We can do this by passing an `Implements` table into the options with the names of the lifecycles we want to have. E.g:
+Firstly we need to create a new service for handling our lifecycle, note this doesnt have to be a service/controller nor does it need to be created straight away. Your lifecycles can be created however, whereever and whenever you like.
 
 ```lua
+-- Services/HeartbeatLifecycleService
+local RunService = game:GetService("RunService")
 local Toasty = require(path.to.Toasty)
 
-local myAwesomeService = {
+local HeartbeatLifecycleService = {
 	Implements = { "OnStart" }
+}
+
+function HeartbeatLifecycleService:OnStart()
+	local heartbeatLifecycle = Toasty.Lifecycle.Create("OnHeartbeat")
+
+	RunService.Heartbeat:Connect(function(deltaTime)
+		heartbeatLifecycle:Dispatch(deltaTime)
+	end)
+end
+
+return HeartbeatLifecycleService
+```
+
+When you create a lifecycle you pass a name, this is the name that you will pass into the `Implements` table of singletons. Anything you pass into `:Dispatch()` will also be passed to every singleton.
+
+:::tip
+You can also pass a custom function when creating a lifecycle to customise how the lifecycle is dispatched. You can see the default function [here](https://github.com/Its-a-bit-random/Toasty/blob/0a9ad5ab7a70f8db538e1934a247d8912b1a5688/Source/Core/LifecycleManager.luau#L6-L13). And you can also see OnInit and OnStart [here](https://github.com/Its-a-bit-random/Toasty/blob/0a9ad5ab7a70f8db538e1934a247d8912b1a5688/Source/Bootstrap.luau#L37-L55) since they also use custom handlers.
+:::
+
+Lets now add this to our HelloWorld service from before.
+
+```lua
+-- Services/MyService.luau
+local MyFirstService = {
+	Implements = { "OnStart", "OnHeartbeat" }; -- Add "OnHeartbeat" to our implements
 }
 
 --[[
-	Lifecycles need to have a function with the same name
-	to call when that event goes off.
+	Add in the function wich gets called when the lifecycle
+	is dispatched
 ]]
-function myAwesomeService:OnStart()
+function MyFirstService:OnHeartbeat(deltaTime: number)
+	print("Heartbeat, dt =", deltaTime)
+end
+
+function MyFirstService:OnStart()
 	print("Hello World!")
 end
 
-Toasty.Service(myAwesomeService)
-return myAwesomeService
+return MyFirstService
 ```
 
-## Toasty provided events
+Running this you should see that your service prints the delta time each frame.
 
-### OnStart
-
-`OnStart` is called when you call the `Toasty.Bootstrap.Toast()` function. E.g:
-
-```lua
--- MyAwesomeService.luau
-local Toasty = require(path.to.Toasty)
-
-local myAwesomeService = {
-	Implements = { "OnStart" }
-}
-
-function myAwesomeService:OnStart()
-	print("Hello World!")
-end
-
-Toasty.Service(myAwesomeService)
-return myAwesomeService
-
--- Runtime.server.luau
-Toasty.Bootstrap.Toast() -- would print "Hello World!"
-```
-
-### OnInit
-
-:::warning
-You should not use OnInit unless you need to use the behavior that it has. Yielding in OnInit will delay calling Init/Start on all other singletons.
-:::
-
-`OnInit` is called when you call the `Toasty.Bootstrap.Toast()` function but before the `OnStart` lifecycle. E.g:
-
-```lua
--- MyAwesomeService.luau
-local Toasty = require(path.to.Toasty)
-
-local myAwesomeService = {
-	Implements = { "OnInit", "OnStart" }
-}
-
-function myAwesomeService:OnStart()
-	print("Start")
-end
-
-function myAwesomeService:OnInit()
-	print("Init")
-end
-
-Toasty.Service(myAwesomeService)
-return myAwesomeService
-
--- Runtime.server.luau
-Toasty.Bootstrap.Toast() -- would print "Init" then "Start"
-```
-
-## Creating Your own
-
-You can create your own lifecycle events that get fired whenever you would like and do whatever you like. Here is a basic example of an `OnHeartbeat` lifecycle event which also passes the `deltaTime` with it.
-
-```lua
-local RunService = game:GetService("RunService")
-local Toasty = require(path.to.Toasty)
-
--- Create our lifecycle
-local onHeartbeatLifecycle = Toasty.Lifecycle.Create("OnHeartbeat")
-
-RunService.Heartbeat:Connect(function(dt: number)
-	-- Dispatch lifecycle passing in delta time
-	onHeartbeatLifecycle:Dispatch(dt)
-end)
-
--- MyService.luau
-local Toasty = require(path.to.Toasty)
-
-local myAwesomeService = {
-	Implements = { "OnHeartbeat" }
-}
-
-function myAwesomeService:OnHeartbeat(dt: number)
-	print(dt)
-end
-
-Toasty.Service(myAwesomeService)
-return myAwesomeService
-```
-
-### Custom Handlers
-
-By default Toasty provides you with a handler for lifecycle events which just calls the function on each singleton which implements that lifecycle event using `task.spawn`. However you may want to do it your own way or add some logging, etc. You can do this by passing a handler function when you create your lifecycle event.
-
-This example simply calls each function without `task.spawn`, the same way that `OnInit` lifecycle works
-```lua
-local RunService = game:GetService("RunService")
-local Toasty = require(path.to.Toasty)
-
-local onHeartbeatLifecycle = Toasty.Lifecycle.Create("OnHeartbeat", function(singletons, name: string, ...: any)
-	for _, v in singletons do
-		-- Toasty makes sure the singleton has the function
-		-- so its safe to assume it exists here
-		local func = v[name]
-		func(v, ...)
-	end
-end)
-
-RunService.Heartbeat:Connect(function(dt: number)
-	onHeartbeatLifecycle:Dispatch(dt)
-end)
-
--- MyService.luau
-local Toasty = require(path.to.Toasty)
-
-local myAwesomeService = {
-	Implements = { "OnHeartbeat" }
-}
-
-function myAwesomeService:OnHeartbeat(dt: number)
-	print(dt)
-end
-
-Toasty.Service(myAwesomeService)
-return myAwesomeService
-```
+As always you can refer to the API docs to learn more about the inner workings of Lifecycles.

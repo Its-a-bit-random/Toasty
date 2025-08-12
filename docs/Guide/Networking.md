@@ -1,54 +1,70 @@
 ---
-sidebar_position: 5
+sidebar_position: 4
 ---
 
 # Networking
 
-:::warning
-As of 1.0.0, toasty sends 12 bytes (a string) with every remote call, this will be eventually removed.
-:::
+Lets have a look at setting up networking. Toasty's networking system is currently bundled with Toasty, however in the future it may be placed in a seperate package to allow users to use a different networking solution.
 
-## Theory
+## Benefits
 
-Toasty only uses Remote events under the hood. This is because Roblox does not have a `UnreliableRemoteFunction`, sicne Toasty networking supports this it replicated the behaviour of `RemoteFunctions` using `RemoteEvents`. This is similar to how Flamework handles remote functions but the implementation may not be the same.
+Toasty's networking comes with a couple of features that native `RemoteEvent` and `RemoteFunction`s just don't have. Here is a list of all features that Toasty brings to networking:
 
-## Getting Started
+- `RemoteFunction`s emulated using `RemoteEvent`s
+	- Allows for Unreliable `RemoteFunction` since ROBLOX doesn't have those
+- Calling `RemoteFunction`s returns a promise instead of blocking
 
-You first need to create your `Networking` module. This is where you define all your events and functions. Here is an example:
+## Setting up
+
+To get started you need to create a module script which describes the structure of your networking. This should be placed somewhere in `ReplicatedStorage` to allow both the Server and Client to access it.
 
 ```lua
--- Shared/Networking.luau
-local Toasty = require(path.to.toasty)
-local Net = Toasty.Networking -- Just a shorthand; not required
+-- ReplicatedStorage/Network.luau
+local Toasty = require(path.to.Toasty)
+local Net = Toasty.Networking -- Shorthand; not required
 
 return {
-	-- Here we define a simple event
-	MyEvent = Net.Event(),
+	MyEvent = Net.Event();
 
-	-- And a function
-	MyFunction = Net.Function(),
-
-	-- You can create namespaces by just adding a table
-	MyNamespace = {
-		MyNamespacedFunction = Net.Function(),
+	NestedStuff = {
+		NestedFunction = Net.Function();
 	}
 }
 ```
 
-Once your networking module is ready you need to set it up on **both** the client and the server:
+We now need to tell toasty to actually create these events and setup everything for them. Lets go back to out Loader script:
 
 ```lua
--- Server/Main.server.luau
+-- Require --
 local Toasty = require(path.to.toasty)
-Toasty.Networking.Setup(path.to.networking)
 
--- Client/Main.client.luau
-local Toasty = require(path.to.toasty)
-Toasty.Networking.Setup(path.to.networking)
+-- Config --
+--[[
+	This is where configs like Feature Flags will go
+]]
+
+-- Networking --
+Toasty.Networking.Setup(path.to.Network) -- This should be the actual ModuleScript!
+
+-- Loading --
+-- Now we can load our actual modules
+Toasty.Bootstrap.LoadSingletonModules(script.Parent.Services, true)
+--[[
+	When using LoadSingletonModules, Toasty automatically handles creating and registering
+	singletons. This means all your modules should return singletons, if not, please
+	restrucutre or call Toasty.Service or Toasty.Controller in every module. Before
+	returning
+]]
+
+-- Toast --
+-- Toasting is the same as calling Knit.Start(). It kicks off all singleton's OnStart and OnInit lifecycles (more info on that later)
+Toasty.Bootstrap.Toast()
 ```
 
-From here to use networking events you can simply require the networking module and access all the events and functions as you would expect.
+Now our networking is setup and ready. This should be done *before* loading singletons and *after* setting config flags (explained next page).
 
-:::tip
-`SetCallback` and `Fire` (Fire only applies to client firing functions to server) take in an `expects` table which can type check things for you. This is done like this to hide types for clients. It is recommended you use `t` or `Toasty.Networking.Arg.*` however you can create your own.
-:::
+Using this networking module is self explanitory so I wont go into it here. However you can refer to the API docs to get the specifics. However here are some key things to keep in mind.
+
+- The events/functions have a `.Client` and `.Server` API, you need to use the correct API depending on where you are using the event from. E.g. on the server use the `.Server` API and on the client use the `.Client` API
+- The server cannot fire `RemoteFunction`s, I wont go into details here but the server should never get information from the cient becaues the server should **never** trust from the client.
+- The first argument when setting callbacks or firing remote functions is a table of type check functions to runtime-type-check networking, you can pass t.* into here or you can use `Toasty.Networking.Args.*`

@@ -1,19 +1,23 @@
 ---
-sidebar_position: 1
+sidebar_position: 5
 ---
 
 # Configuration
 
-Toasty can be configured using `_G`. Since this can get annoying to do Toasty exports a [Flags](/api/Flags) module which has functions and whatnot to make configs very simple.
+Toasty can be configured via `_G` with "Flags", since its annoying to write certain key's for `_G` Toasty exports a Flags API to help with this.
 
-## Flags
+Your flags should be enabled first thing after requiring Toasty. See the [Flags API](/api/Flags) to learn how to enable/disable flags. 
 
-### Verbose
+See below a list of all flags and what they do:
 
-Makes toasty print out everything its doing into console.
+## `Toasty.Flags.Flags.Verbose`
 
-### FlatNetworkStructure
+Enables loggging for toasty to let you know exactly whats going on and when.
 
-When creating remote events toasty just dumps them all into the Remotes folder rather than keeping structure defined in your `Networking` module.
+## `Toasty.Flags.Flags.FlatNetworkStructure`
 
-In Flamework this is the default behaviour however with Toasty it is disabled by default and can be enabled using this Feature Flag.
+When toasty creates your networking instances, they by default get put into folders which match to the same strucutre defined in your Network module. By turning this flag on Toasty just dumps all your network events into the remotes folder.
+
+:::tip
+With this enabled events with the same name can still exist.
+:::
