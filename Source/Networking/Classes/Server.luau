@@ -17,8 +17,10 @@ export type ServerEvent = {
 		expects: { Shared.TypeCheckFunc },
 		callback: (player: Player, ...any) -> ()
 	) -> RBXScriptConnection,
+	Predict: (self: ServerEvent, player: Player, ...any) -> (),
 	_Instance: RemoteEvent,
 	_CallbackSet: boolean,
+	_Callback: (...any) -> (),
 }
 
 --[=[
@@ -83,7 +85,7 @@ function ServerEvent.SetCallback(
 		return
 	end
 	self._CallbackSet = true
-	self._Instance.OnServerEvent:Connect(function(player: Player, ...: any)
+	self._Callback = function(player: Player, ...: any)
 		local args = { ... }
 
 		for i, checkFunc in expects do
@@ -97,7 +99,27 @@ function ServerEvent.SetCallback(
 		end
 
 		callback(player, ...)
+	end
+
+	self._Instance.OnServerEvent:Connect(function(...: any)
+		self:Predict(...)
 	end)
+end
+
+--[=[
+	@method Predict
+	@param player Player
+	@param ... any
+	@within ServerEvent
+
+	Fire an event from server to the server as a player
+]=]
+function ServerEvent.Predict(self: ServerEvent, player: Player, ...: any)
+	if self._Callback then
+		self._Callback(player, ...)
+	else
+		warn("No callback")
+	end
 end
 
 -------------------------------------------------------------------
@@ -112,6 +134,7 @@ export type ServerFunction = {
 	Fire: (self: ServerFunction, player: Player, ...any) -> (),
 	FirePlayers: (self: ServerFunction, players: { Player }, ...any) -> (),
 	Broadcast: (self: ServerFunction, ...any) -> (),
+	Predict: (self: ServerFunction, player: Player, ...any) -> (),
 	SetCallback: (
 		self: ServerEvent,
 		expects: { Shared.TypeCheckFunc },
@@ -119,6 +142,7 @@ export type ServerFunction = {
 	) -> RBXScriptConnection,
 	_Instance: RemoteEvent,
 	_CallbackSet: boolean,
+	_Callback: (...any) -> (),
 }
 
 --[=[
@@ -153,7 +177,7 @@ function ServerFunction.SetCallback(
 	end
 
 	self._CallbackSet = true
-	self._Instance.OnServerEvent:Connect(function(player: Player, id: string, ...)
+	self._Callback = function(player: Player, ...)
 		local args = { ... }
 
 		for i, checkFunc in expects do
@@ -165,8 +189,24 @@ function ServerFunction.SetCallback(
 			end
 		end
 
-		self._Instance:FireClient(player, id, callback(player, ...))
+		return callback(player, ...)
+	end
+
+	return self._Instance.OnServerEvent:Connect(function(player, id, ...)
+		self._Instance:FireClient(player, id, self._Callback(player, ...))
 	end)
+end
+
+--[=[
+	@method Predict
+	@param Player player
+	@param ... any
+	@within ServerFunction
+
+	Fire a function from the server to the server as a player.
+]=]
+function ServerFunction.Predict(self: ServerFunction, player: Player, ...: any)
+	return self._Callback(player, ...)
 end
 
 return {

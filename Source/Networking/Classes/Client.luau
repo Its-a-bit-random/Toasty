@@ -14,8 +14,10 @@ export type ClientEvent = {
 		expects: { Shared.TypeCheckFunc },
 		callback: (...any) -> ()
 	) -> RBXScriptConnection,
+	Predict: (self: ClientEvent, ...any) -> (),
 	_Instance: RemoteEvent,
 	_CallbackSet: boolean,
+	_Callback: (...any) -> ()?,
 }
 
 --[=[
@@ -61,7 +63,7 @@ function ClientEvent.SetCallback(
 		return
 	end
 	self._CallbackSet = true
-	return self._Instance.OnClientEvent:Connect(function(...: any)
+	self._Callback = function(...: any)
 		local args = { ... }
 
 		for i, checkFunc in expects do
@@ -75,7 +77,26 @@ function ClientEvent.SetCallback(
 		end
 
 		callback(...)
+	end
+
+	return self._Instance.OnClientEvent:Connect(function(...)
+		self:Predict(...)
 	end)
+end
+
+--[=[
+	@method Predict
+	@param ... any
+	@within ClientEvent
+
+	Fires an event from the client to client, this would be the same as firing a `BindableEvent`
+]=]
+function ClientEvent.Predict(self: ClientEvent, ...: any)
+	if self._Callback then
+		self._Callback(...)
+	else
+		warn("Callback not set")
+	end
 end
 
 -------------------------------------------------------------------
@@ -89,7 +110,6 @@ ClientFunction.__index = ClientFunction
 export type ClientFunction = {
 	Fire: (self: ClientFunction, expects: { Shared.TypeCheckFunc }, ...any) -> Promise.Promise,
 	_Instance: RemoteEvent,
-	_CallbackSet: boolean,
 }
 
 --[=[

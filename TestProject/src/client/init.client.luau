@@ -15,3 +15,5 @@ Net.URF.Client
 	:andThen(function(arg: string)
 		print(arg)
 	end)
+
+Net.URE.Client:Fire("Hello!")
