@@ -1,5 +1,6 @@
 local Players = game:GetService("Players")
 
+local Types = require(script.Parent.Parent.Parent.Core.Types)
 local Shared = require(script.Parent.Parent.Shared)
 local Connection = require(script.Parent.Connection)
 
@@ -109,7 +110,7 @@ function ServerEvent.SetCallback(
 
 	local wrapped = Connection.Connection(robloxConn)
 
-	wrapped._Disconnectd:Connect(function()
+	wrapped._Disconnected:Connect(function()
 		self._CallbackSet = false
 		self._Callback = nil
 	end)
@@ -154,6 +155,7 @@ export type ServerFunction = {
 	_Instance: RemoteEvent,
 	_CallbackSet: boolean,
 	_Callback: (...any) -> ()?,
+	_Middleware: { Types.MiddlewareFn },
 }
 
 --[=[
@@ -166,6 +168,7 @@ function ServerFunction.new(instance: RemoteEvent)
 	local self = setmetatable({}, ServerFunction)
 	self._Instance = instance
 	self._CallbackSet = false
+	self._Middleware = {}
 	return self :: ServerFunction
 end
 
@@ -214,7 +217,7 @@ function ServerFunction.SetCallback(
 
 	local wrapped = Connection.Connection(robloxConn)
 
-	wrapped._Disconnectd:Once(function()
+	wrapped._Disconnected:Once(function()
 		self._CallbackSet = false
 		self._Callback = nil
 	end)

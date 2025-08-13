@@ -42,32 +42,16 @@ export type Lifecycle = {
 	_OnDispatch: LifecycleHandler,
 }
 
-export type ServerEventReceiver = {
-	Name: string,
-	Unreliable: boolean,
+--[=[
+	@type Marker {}
+	@within Types
+]=]
+export type Marker = {}
 
-	SetCallback: (self: ServerEventReceiver, callback: (player: Player, ...any) -> ()) -> (),
-}
-
-export type ServerEventSender = {
-	Name: string,
-	Unreliable: boolean,
-
-	Fire: (self: ServerEventSender, player: Player, ...any) -> (),
-	FirePlayers: (self: ServerEventSender, players: { Player }, ...any) -> (),
-	Broadcast: (self: ServerEventSender, ...any) -> (),
-}
-
-export type ClientEventReceiver = {
-	Name: string,
-
-	SetCallback: (self: ServerEventReceiver, callback: (player: Player, ...any) -> ()) -> (),
-}
-
-export type ClientEventSender = {
-	Name: string,
-
-	Fire: (self: ServerEventSender, ...any) -> (),
-}
+--[=[
+	@type MiddlewareFnn(deny: Marker, next: Marker) -> Marker
+	@within Types
+]=]
+export type MiddlewareFn = (deny: Marker, next: Marker) -> Marker
 
 return nil

@@ -86,7 +86,7 @@ function ClientEvent.SetCallback(
 
 	local wrapped = Connection.Connection(robloxConn)
 
-	wrapped._Disconnectd:Connect(function()
+	wrapped._Disconnected:Connect(function()
 		self._CallbackSet = false
 		self._Callback = nil
 	end)

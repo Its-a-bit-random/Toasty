@@ -41,5 +41,8 @@ return {
 	FunctionMarker = Util.Marker(),
 	UnreliableFunctionMarker = Util.Marker(),
 
+	MiddlewareNextMarker = Util.Marker(),
+	MiddlewareDenyMarker = Util.Marker(),
+
 	GenerateRequestID = GenerateRequestID,
 }
