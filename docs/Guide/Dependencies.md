@@ -33,5 +33,5 @@ Now toasty will call `OnInit` for MyOtherService before `OnInit` for MyService. 
 You can pass a custom load order into singletons using `LoadOrder`. By default all singletons are on load order 2. The higher the `LoadOrder` the later the singleton will load. If you want some singletons to always load before any other ones you can pass in a `LoadOrder` of 1.
 
 :::warning
-Toasty wont warn you but if your singleton is a LoadOrder = 1, but it has a dependency that is LoadOrder = 2, Toasty may not start your singletons in the right order!
+Toasty puts priority on loading dependencies in the right order. So if your singleton has a `LoadOrder` of 2 and one of its dependencies has a `LoadOrder` = 3, that dependency will still be started before, ignoring the `LoadOrder`.
 :::

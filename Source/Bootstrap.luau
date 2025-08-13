@@ -1,4 +1,6 @@
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Toasty = script.Parent
+local Types = require(ReplicatedStorage.Packages.Toasty.Core.Types)
 local Flags = require(script.Parent.Flags)
 local Util = require(Toasty.Util)
 local SingletonManager = require(Toasty.Core.SingletonManager)
@@ -74,10 +76,15 @@ local function Toast()
 				print("[TOASTY]", `LOAD ORDER = {loadOrder}`)
 			end
 
-			for i, v in ipairs(singletons) do
+			for i, v: Types.Singleton in ipairs(singletons) do
+				if v["__TOASTY_INIT__"] == true then
+					continue
+				end
+
 				local func = v[name]
 				if typeof(func) == "function" then
 					func(v, ...)
+					v["__TOASTY_INIT__"] = true
 					if Flags.IsEnabled(Flags.Flags.Verbose) then
 						print("[TOASTY]", `{i} / {#singletons}`)
 					end
@@ -101,8 +108,12 @@ local function Toast()
 			end
 
 			for i, v in ipairs(singletons) do
+				if v["__TOASTY_START__"] == true then
+					continue
+				end
 				local func = v[name]
 				if typeof(func) == "function" then
+					v["__TOASTY_START__"] = true
 					func(v, ...)
 					if Flags.IsEnabled(Flags.Flags.Verbose) then
 						print("[TOASTY]", `{i} / {#singletons}`)
@@ -113,7 +124,7 @@ local function Toast()
 	end)
 	if Flags.IsEnabled(Flags.Flags.Verbose) then
 		print(string.rep("=", 50))
-		print("[TOASTY]", "INITIALIZING SINGLETONS")
+		print("[TOASTY]", "STARTING SINGLETONS")
 	end
 	onStart:Dispatch()
 	if Flags.IsEnabled(Flags.Flags.Verbose) then
