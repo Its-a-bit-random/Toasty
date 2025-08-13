@@ -147,6 +147,7 @@ export type ServerFunction = {
 	FirePlayers: (self: ServerFunction, players: { Player }, ...any) -> (),
 	Broadcast: (self: ServerFunction, ...any) -> (),
 	Predict: (self: ServerFunction, player: Player, ...any) -> (),
+	AddMiddleware: (self: ServerFunction, fn: Types.MiddlewareFn) -> (),
 	SetCallback: (
 		self: ServerFunction,
 		expects: { Shared.TypeCheckFunc },
@@ -193,8 +194,35 @@ function ServerFunction.SetCallback(
 
 	self._CallbackSet = true
 	self._Callback = function(player: Player, ...)
+		-- Middleware
 		local args = { ... }
+		for _, middleware in ipairs(self._Middleware) do
+			local deny = false
 
+			local success, errorMessage = pcall(function()
+				local result = middleware(Shared.MiddlewareDenyMarker, Shared.MiddlewareNextMarker, args)
+
+				if result == Shared.MiddlewareDenyMarker then
+					deny = true
+				elseif result == Shared.MiddlewareNextMarker then
+					deny = false
+				else
+					error("Invalid result")
+				end
+			end)
+
+			if not success then
+				deny = true
+				warn("Failed to run middleware:", errorMessage)
+			end
+
+			if deny then
+				error("Middleware denied request")
+				return Shared.MiddlewareDenyMarker
+			end
+		end
+
+		-- Type checks
 		for i, checkFunc in expects do
 			local arg = args[i]
 			local success, errorMessage = checkFunc(arg)
@@ -204,7 +232,8 @@ function ServerFunction.SetCallback(
 			end
 		end
 
-		return callback(player, ...)
+		-- Actual callback
+		return callback(player, table.unpack(args))
 	end
 
 	local robloxConn = self._Instance.OnServerEvent:Connect(function(player, id, ...)
@@ -223,6 +252,17 @@ function ServerFunction.SetCallback(
 	end)
 
 	return wrapped
+end
+
+--[=[
+	@method AddMiddleware
+	@param fn MiddlewareFn
+	@within ServerFunction
+
+	Adds a new middleware function to run when the function is fired
+]=]
+function ServerFunction.AddMiddleware(self: ServerFunction, fn: Types.MiddlewareFn)
+	table.insert(self._Middleware, fn)
 end
 
 --[=[

@@ -49,9 +49,11 @@ export type Lifecycle = {
 export type Marker = {}
 
 --[=[
-	@type MiddlewareFnn(deny: Marker, next: Marker) -> Marker
+	@type MiddlewareFn (deny: Marker, next: Marker, args: {[number]: any}) -> Marker
 	@within Types
+	The Args table is the Args that are passed to the event callback. Any modifications to these
+	are retained to the next middleware and eventually to the callback.
 ]=]
-export type MiddlewareFn = (deny: Marker, next: Marker) -> Marker
+export type MiddlewareFn = (deny: Marker, next: Marker, { [number]: any }) -> Marker
 
 return nil
