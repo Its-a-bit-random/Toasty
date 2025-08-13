@@ -2,7 +2,7 @@
 
 ## Unreleased
 
-* Added `LoadOrder` option to singletons
+* Added `LoadOrder` option to singletons ([#7])
 * Fixed `.rbxm` workflow to have types in packages
 * Fixed docs spelling
 
