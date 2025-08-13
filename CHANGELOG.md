@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+* Fixed `.rbxm` workflow to have types in packages
 * Fixed docs spelling
 
 ## 1.0.0
