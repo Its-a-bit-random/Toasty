@@ -7,22 +7,26 @@
 	@interface Singleton
 	.Implements { string }
 	.Dependencies { Singleton }
+	.LoadOrder number
 	@within Types
 ]=]
 export type Singleton = {
 	Implements: { string },
 	Dependencies: { Singleton },
+	LoadOrder: number,
 }
 
 --[=[
 	@interface SingletonOptions
 	.Implements { string }?
 	.Dependencies { Singleton }?
+	.LoadOrder number?
 	@within Types
 ]=]
 export type SingletonOptions = {
 	Implements: { string }?,
 	Dependencies: { Singleton }?,
+	LoadOrder: number?,
 }
 
 --[=[

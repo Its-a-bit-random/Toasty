@@ -26,11 +26,17 @@ local function Create(options: Types.SingletonOptions)
 		options.Dependencies = {}
 	end
 
+	if options.LoadOrder == nil then
+		options.LoadOrder = 2
+	end
+
 	local newSingleton = options :: Types.Singleton
 	table.insert(Singletons, newSingleton)
+
 	if Flags.IsEnabled(Flags.Flags.Verbose) then
 		print("[TOASTY]", "Registered new singleton")
 	end
+
 	return newSingleton
 end
 

@@ -1,5 +1,6 @@
 local Toasty = script.Parent
-local Flags = require(script.Parent.Flags)
+local Types = require(Toasty.Core.Types)
+local Flags = require(Toasty.Flags)
 local Util = require(Toasty.Util)
 local SingletonManager = require(Toasty.Core.SingletonManager)
 local LifecycleManager = require(Toasty.Core.LifecycleManager)
@@ -54,24 +55,38 @@ end
 ]=]
 local function Toast()
 	local unsortedSingletons = SingletonManager.GetAll()
-	local singletons = Util.Table.TopologicalSort(unsortedSingletons, "Dependencies")
 
-	if Flags.IsEnabled(Flags.Flags.Verbose) then
-		local order = {}
-		for _, v in ipairs(singletons) do
-			table.insert(order, v)
-			table.insert(order, "->")
-		end
-		print("[TOASTY]", "Sorted singletons to init + start in order \n", table.unpack(order))
+	local loadOrderedSingletons = {}
+	for _, singleton in unsortedSingletons do
+		local tbl = loadOrderedSingletons[singleton.LoadOrder] or {}
+		table.insert(tbl, singleton)
+		loadOrderedSingletons[singleton.LoadOrder] = tbl
+	end
+
+	local sortedSingletons = {}
+	for loadOrder, singletons in loadOrderedSingletons do
+		local sorted = Util.Table.TopologicalSort(singletons, "Dependencies")
+		sortedSingletons[loadOrder] = sorted
 	end
 
 	local onInit = LifecycleManager.Create("OnInit", function(_, name: string, ...: any)
-		for i, v in ipairs(singletons) do
-			local func = v[name]
-			if typeof(func) == "function" then
-				func(v, ...)
-				if Flags.IsEnabled(Flags.Flags.Verbose) then
-					print("[TOASTY]", `{i} / {#singletons}`)
+		for loadOrder, singletons in ipairs(sortedSingletons) do
+			if Flags.IsEnabled(Flags.Flags.Verbose) then
+				print("[TOASTY]", `LOAD ORDER = {loadOrder}`)
+			end
+
+			for i, v: Types.Singleton in ipairs(singletons) do
+				if v["__TOASTY_INIT__"] == true then
+					continue
+				end
+
+				local func = v[name]
+				if typeof(func) == "function" then
+					func(v, ...)
+					v["__TOASTY_INIT__"] = true
+					if Flags.IsEnabled(Flags.Flags.Verbose) then
+						print("[TOASTY]", `{i} / {#singletons}`)
+					end
 				end
 			end
 		end
@@ -86,22 +101,29 @@ local function Toast()
 	end
 
 	local onStart = LifecycleManager.Create("OnStart", function(_, name: string, ...: any)
-		for i, v in ipairs(singletons) do
-			local func = v[name]
-			if typeof(func) == "function" then
-				local args = { ... }
-				task.spawn(function()
-					func(v, table.unpack(args))
+		for loadOrder, singletons in ipairs(sortedSingletons) do
+			if Flags.IsEnabled(Flags.Flags.Verbose) then
+				print("[TOASTY]", `LOAD ORDER = {loadOrder}`)
+			end
+
+			for i, v in ipairs(singletons) do
+				if v["__TOASTY_START__"] == true then
+					continue
+				end
+				local func = v[name]
+				if typeof(func) == "function" then
+					v["__TOASTY_START__"] = true
+					func(v, ...)
 					if Flags.IsEnabled(Flags.Flags.Verbose) then
 						print("[TOASTY]", `{i} / {#singletons}`)
 					end
-				end)
+				end
 			end
 		end
 	end)
 	if Flags.IsEnabled(Flags.Flags.Verbose) then
 		print(string.rep("=", 50))
-		print("[TOASTY]", "INITIALIZING SINGLETONS")
+		print("[TOASTY]", "STARTING SINGLETONS")
 	end
 	onStart:Dispatch()
 	if Flags.IsEnabled(Flags.Flags.Verbose) then
