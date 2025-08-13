@@ -16,7 +16,7 @@ Enables loggging for toasty to let you know exactly whats going on and when.
 
 ## `Toasty.Flags.Flags.FlatNetworkStructure`
 
-When toasty creates your networking instances, they by default get put into folders which match to the same strucutre defined in your Network module. By turning this flag on Toasty just dumps all your network events into the remotes folder.
+When toasty creates your networking instances, they by default get put into folders which match to the same structure defined in your Network module. By turning this flag on Toasty just dumps all your network events into the remotes folder.
 
 :::tip
 With this enabled events with the same name can still exist.

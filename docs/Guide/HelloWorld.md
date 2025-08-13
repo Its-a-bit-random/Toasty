@@ -28,12 +28,12 @@ Toasty.Bootstrap.LoadSingletonModules(script.Parent.Services, true)
 --[[
 	When using LoadSingletonModules, Toasty automatically handles creating and registering
 	singletons. This means all your modules should return singletons, if not, please
-	restrucutre or call Toasty.Service or Toasty.Controller in every module. Before
+	restructure or call Toasty.Service or Toasty.Controller in every module. Before
 	returning
 ]]
 
 -- Toast --
--- Toasting is the same as calling Knit.Start(). It kicks off all singleton's OnStart and OnInit lifecycles (more info on that later)
+-- Toasting is the same as calling Knit.Start(). It kicks off all singleton's OnStart and OnInit lifecycle (more info on that later)
 Toasty.Bootstrap.Toast()
 ```
 

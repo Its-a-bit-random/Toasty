@@ -4,11 +4,11 @@ sidebar_position: 4
 
 # Lifecycle
 
-In the example service given in the "Hello World" page you might have noticed a table called "Implements". By default Toasty comes with OnInit and OnStart, ghis is where Toasty becomes really powerful, you can create and implement your own lifecycle functionss.
+In the example service given in the "Hello World" page you might have noticed a table called "Implements". By default Toasty comes with OnInit and OnStart, this is where Toasty becomes really powerful, you can create and implement your own lifecycle functions.
 
 Lets create our own OnHeartbeat lifecycle and add it to our service from before.
 
-Firstly we need to create a new service for handling our lifecycle, note this doesnt have to be a service/controller nor does it need to be created straight away. Your lifecycles can be created however, whereever and whenever you like.
+Firstly we need to create a new service for handling our lifecycle, note this doesn't have to be a service/controller nor does it need to be created straight away. Your lifecycle can be created however, wherever and whenever you like.
 
 ```lua
 -- Services/HeartbeatLifecycleService
@@ -33,7 +33,7 @@ return HeartbeatLifecycleService
 When you create a lifecycle you pass a name, this is the name that you will pass into the `Implements` table of singletons. Anything you pass into `:Dispatch()` will also be passed to every singleton.
 
 :::tip
-You can also pass a custom function when creating a lifecycle to customise how the lifecycle is dispatched. You can see the default function [here](https://github.com/Its-a-bit-random/Toasty/blob/0a9ad5ab7a70f8db538e1934a247d8912b1a5688/Source/Core/LifecycleManager.luau#L6-L13). And you can also see OnInit and OnStart [here](https://github.com/Its-a-bit-random/Toasty/blob/0a9ad5ab7a70f8db538e1934a247d8912b1a5688/Source/Bootstrap.luau#L37-L55) since they also use custom handlers.
+You can also pass a custom function when creating a lifecycle to customize how the lifecycle is dispatched. You can see the default function [here](https://github.com/Its-a-bit-random/Toasty/blob/0a9ad5ab7a70f8db538e1934a247d8912b1a5688/Source/Core/LifecycleManager.luau#L6-L13). And you can also see OnInit and OnStart [here](https://github.com/Its-a-bit-random/Toasty/blob/0a9ad5ab7a70f8db538e1934a247d8912b1a5688/Source/Bootstrap.luau#L37-L55) since they also use custom handlers.
 :::
 
 Lets now add this to our HelloWorld service from before.
@@ -45,7 +45,7 @@ local MyFirstService = {
 }
 
 --[[
-	Add in the function wich gets called when the lifecycle
+	Add in the function which gets called when the lifecycle
 	is dispatched
 ]]
 function MyFirstService:OnHeartbeat(deltaTime: number)
