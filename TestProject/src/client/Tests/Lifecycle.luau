@@ -1,17 +1,28 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local Promise = require(ReplicatedStorage.Packages.Promise)
+local Signal = require(ReplicatedStorage.Packages.Signal)
 local Toasty = require(ReplicatedStorage.Packages.Toasty)
-local Net = require(ReplicatedStorage.Shared.Net)
 
 return function()
-	local result = true
-	local reason = ""
+	local result, reason = true, ""
 
-	Net.RF.Client
-		:Fire({
-			Toasty.Networking.Arg.string,
-		}, "Hello!")
+	local lf = Toasty.Lifecycle.Create("TEST_LIFECYCLE")
+	local lf_sig = Signal.new()
+
+	Promise.delay(1):andThen(function()
+		lf:Dispatch(lf_sig, 5)
+	end)
+
+	Promise.fromEvent(lf_sig)
+		:andThen(function(got: number)
+			if got ~= 5 then
+				result = false
+				reason = "Incorrect value passed"
+			else
+				result = true
+			end
+		end)
 		:timeout(5)
 		:catch(function(e)
 			result = false

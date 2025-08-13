@@ -10,7 +10,7 @@ Toasty.Bootstrap.Toast()
 
 local Net = require(ReplicatedStorage.Shared.Net)
 
-Net.URF.Server:SetCallback({
+Net.RF.Server:SetCallback({
 	Toasty.Networking.Arg.string,
 }, function(player: Player, myString: string)
 	return `{player} {myString}`
