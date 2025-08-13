@@ -34,4 +34,6 @@ You can pass a custom load order into singletons using `LoadOrder`. By default a
 
 :::warning
 Toasty puts priority on loading dependencies in the right order. So if your singleton has a `LoadOrder` of 2 and one of its dependencies has a `LoadOrder` = 3, that dependency will still be started before, ignoring the `LoadOrder`.
+
+At some point in the future this may become config to change how this works but for now this is how Toasty handles it.
 :::
