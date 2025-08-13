@@ -12,7 +12,7 @@ See below a list of all flags and what they do:
 
 ## `Toasty.Flags.Flags.Verbose`
 
-Enables loggging for toasty to let you know exactly whats going on and when.
+Enables logging for toasty to let you know exactly whats going on and when.
 
 ## `Toasty.Flags.Flags.FlatNetworkStructure`
 
@@ -21,3 +21,7 @@ When toasty creates your networking instances, they by default get put into fold
 :::tip
 With this enabled events with the same name can still exist.
 :::
+
+## `Toasty.Flags.Flags.Testing`
+
+This should never be enabled, this is a testing mode intended to be enabled while testing Toasty itself. If you are testing something that uses Toasty then do **NOT** turn this on.

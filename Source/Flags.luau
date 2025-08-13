@@ -23,15 +23,16 @@
 local Flags = {
 	["Verbose"] = "Verbose",
 	["FlatNetworkStructure"] = "FlatNetworkStructure",
+	["TESTING"] = "TESTING",
 }
 table.freeze(Flags)
 
 local function CreateGlobalKey(str: string)
 	local PREFIX = "__TOASTY_"
 	local key = str:upper()
-	local SUFFEX = "__"
+	local SUFFIX = "__"
 
-	return `{PREFIX}{key}{SUFFEX}`
+	return `{PREFIX}{key}{SUFFIX}`
 end
 
 --[=[

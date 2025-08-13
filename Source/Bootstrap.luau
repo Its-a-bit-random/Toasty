@@ -65,11 +65,22 @@ local function Toast()
 		print("[TOASTY]", "Sorted singletons to init + start in order \n", table.unpack(order))
 	end
 
+	if Flags.IsEnabled(Flags.Flags.TESTING) then
+		for i, v in ipairs(singletons) do
+			v["_METADATA_LOAD_ORDER_INDEX"] = i
+		end
+	end
+
 	local onInit = LifecycleManager.Create("OnInit", function(_, name: string, ...: any)
 		for i, v in ipairs(singletons) do
 			local func = v[name]
 			if typeof(func) == "function" then
+				if Flags.IsEnabled(Flags.Flags.TESTING) then
+					v["_METADATA_ONINIT_CALL_TIME"] = os.time()
+				end
+
 				func(v, ...)
+
 				if Flags.IsEnabled(Flags.Flags.Verbose) then
 					print("[TOASTY]", `{i} / {#singletons}`)
 				end
@@ -91,7 +102,12 @@ local function Toast()
 			if typeof(func) == "function" then
 				local args = { ... }
 				task.spawn(function()
+					if Flags.IsEnabled(Flags.Flags.TESTING) then
+						v["_METADATA_ONSTART_CALL_TIME"] = os.time()
+					end
+
 					func(v, table.unpack(args))
+
 					if Flags.IsEnabled(Flags.Flags.Verbose) then
 						print("[TOASTY]", `{i} / {#singletons}`)
 					end

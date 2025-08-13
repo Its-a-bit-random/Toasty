@@ -6,7 +6,7 @@ local Singletons: { Types.Singleton } = {}
 
 --[=[
 	@class SingletonManager
-	Handles the creation and tracking of all singeltons created
+	Handles the creation and tracking of all singletons created
 ]=]
 
 --[=[
@@ -15,7 +15,7 @@ local Singletons: { Types.Singleton } = {}
 	@param options SingletonOptions
 	@return Singleton
 
-	Creates a new singelton
+	Creates a new singleton
 ]=]
 local function Create(options: Types.SingletonOptions)
 	if options.Implements == nil then
