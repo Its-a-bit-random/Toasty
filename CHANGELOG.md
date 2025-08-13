@@ -2,8 +2,11 @@
 
 ## Unreleased
 
+* Proper testing system ([#6])
 * Fixed `.rbxm` workflow to have types in packages
 * Fixed docs spelling
+
+[#6]: https://github.com/Its-a-bit-random/Toasty/pull/6
 
 ## 1.0.0
 
