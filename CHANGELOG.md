@@ -2,8 +2,11 @@
 
 ## Unreleased
 
+* Added `LoadOrder` option to singletons
 * Fixed `.rbxm` workflow to have types in packages
 * Fixed docs spelling
+
+[#7]: https://github.com/Its-a-bit-random/Toasty/pull/7
 
 ## 1.0.0
 
