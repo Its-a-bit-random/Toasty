@@ -72,6 +72,7 @@ function ServerEvent.Broadcast(self: ServerEvent, ...: any)
 end
 
 --[=[
+	@since v1.1.0
 	@method AddMiddleware
 	@param fn MiddlewareFn
 	@within ServerEvent
@@ -256,6 +257,7 @@ function ServerFunction.SetCallback(
 end
 
 --[=[
+	@since v1.1.0
 	@method AddMiddleware
 	@param fn MiddlewareFn
 	@within ServerFunction

@@ -49,6 +49,7 @@ export type Lifecycle = {
 export type Marker = {}
 
 --[=[
+	@since v1.1.0
 	@type MiddlewareFn (deny: Marker, next: Marker, args: {[number]: any}) -> Marker
 	@within Types
 	The Args table is the Args that are passed to the event callback. Any modifications to these

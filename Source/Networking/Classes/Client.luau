@@ -48,6 +48,7 @@ function ClientEvent.Fire(self: ClientEvent, ...: any)
 end
 
 --[=[
+	@since v1.1.0
 	@method AddMiddleware
 	@param fn MiddlewareFn
 	@within ClientEvent

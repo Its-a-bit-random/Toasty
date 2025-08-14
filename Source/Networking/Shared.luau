@@ -41,6 +41,7 @@ local MiddlewareDenyMarker = Util.Marker()
 
 --[=[
 	@ignore
+	@within Networking
 
 	Runs the passed middleware functions
 ]=]
