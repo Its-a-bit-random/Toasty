@@ -13,7 +13,7 @@ A powerful Luau game framework inspired by Flamework for Roblox-TS. Toasty is in
 
 ## Installing
 
-Toasty can be installed via 2 methods at the moment. Via Wally (package manager) or via a `.rbxm` file. Follow the below instructions for your prefered method.
+Toasty can be installed via 2 methods at the moment. Via Wally (package manager) or via a `.rbxm` file. Follow the below instructions for your preferred method.
 
 ### Wally
 
@@ -34,4 +34,4 @@ If you want to use Toasty directly in Roblox Studio without Rojo or Wally you mu
 
 Once tou have that downloaded drag and drop that file into studio and move the `Packages` folder into ReplicatedStorage.
 
-This is the exact equivilent of doing the Wally install method but done for you and is intended to be used with non-rojo managed games.
+This is the exact equivalent of doing the Wally install method but done for you and is intended to be used with non-rojo managed games.

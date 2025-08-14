@@ -3,3 +3,4 @@ Packages/
 DevPackages/
 *.DS_Store
 Build/
+Toasty/

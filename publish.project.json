@@ -3,7 +3,7 @@
 	"tree": {
 		"$path": "Packages/",
 		"Toasty": {
-			"$path": "Source"
+			"$path": "Toasty/"
 		}
 	}
 }

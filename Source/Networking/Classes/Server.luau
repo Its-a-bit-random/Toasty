@@ -1,8 +1,8 @@
 local Players = game:GetService("Players")
 
-local Types = require(script.Parent.Parent.Parent.Core.Types)
-local Shared = require(script.Parent.Parent.Shared)
-local Connection = require(script.Parent.Connection)
+local Types = require("@Core/Types")
+local Shared = require("@Networking/Shared")
+local Connection = require("@Networking/Classes/Connection")
 
 --[=[
 	@class ServerEvent

@@ -1,0 +1,7 @@
+{
+	"aliases": {
+		"Toasty": "Source/",
+		"Core": "Source/Core",
+		"Networking": "Source/Networking"
+	}
+}

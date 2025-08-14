@@ -10,7 +10,7 @@ realm = "shared"
 registry = "https://github.com/upliftgames/wally-index"
 
 exclude = ["**"]
-include = ["default.project.json", "Source", "Source/**", "LICENSE", "wally.toml"]
+include = ["default.project.json", "Toasty", "Toasty/**", "LICENSE", "wally.toml"]
 private = false
 
 [dependencies]

@@ -1,9 +1,8 @@
-local Toasty = script.Parent
-local Types = require(Toasty.Core.Types)
-local Flags = require(Toasty.Flags)
-local Util = require(Toasty.Util)
-local SingletonManager = require(Toasty.Core.SingletonManager)
-local LifecycleManager = require(Toasty.Core.LifecycleManager)
+local Types = require("@Core/Types")
+local Flags = require("@Toasty/Flags")
+local Util = require("@Toasty/Util")
+local SingletonManager = require("@Core/SingletonManager")
+local LifecycleManager = require("@Core/LifecycleManager")
 
 --[=[
 	@class Bootstrap

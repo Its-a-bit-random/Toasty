@@ -1,6 +1,5 @@
-local Core = script.Parent
-local Types = require(Core.Types)
-local Flags = require(script.Parent.Parent.Flags)
+local Types = require("@core/Types")
+local Flags = require("@Toasty/Flags")
 
 local Singletons: { Types.Singleton } = {}
 
