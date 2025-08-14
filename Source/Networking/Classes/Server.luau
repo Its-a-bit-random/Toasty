@@ -3,7 +3,6 @@ local Players = game:GetService("Players")
 local Types = require(script.Parent.Parent.Parent.Core.Types)
 local Shared = require(script.Parent.Parent.Shared)
 local Connection = require(script.Parent.Connection)
-local Flags = require(script.Parent.Parent.Parent.Flags)
 
 --[=[
 	@class ServerEvent
@@ -15,6 +14,7 @@ export type ServerEvent = {
 	Fire: (self: ServerEvent, player: Player, ...any) -> (),
 	FirePlayers: (self: ServerEvent, players: { Player }, ...any) -> (),
 	Broadcast: (self: ServerEvent, ...any) -> (),
+	AddMiddleware: (self: ServerEvent, fn: Types.MiddlewareFn) -> (),
 	SetCallback: (
 		self: ServerEvent,
 		expects: { Shared.TypeCheckFunc },
@@ -24,6 +24,7 @@ export type ServerEvent = {
 	_Instance: RemoteEvent,
 	_CallbackSet: boolean,
 	_Callback: (...any) -> ()?,
+	_Middleware: { Types.MiddlewareFn },
 }
 
 --[=[
@@ -71,6 +72,17 @@ function ServerEvent.Broadcast(self: ServerEvent, ...: any)
 end
 
 --[=[
+	@method AddMiddleware
+	@param fn MiddlewareFn
+	@within ServerEvent
+
+	Adds a new middleware function to run when the event is fired
+]=]
+function ServerEvent.AddMiddleware(self: ServerEvent, fn: Types.MiddlewareFn)
+	table.insert(self._Middleware, fn)
+end
+
+--[=[
 	@method SetCallback
 	@param expects {TypeCheckFunc} -- What is expected from the client
 	@param callback (player: Player, ...any) -> ()
@@ -91,6 +103,13 @@ function ServerEvent.SetCallback(
 	self._CallbackSet = true
 	self._Callback = function(player: Player, ...: any)
 		local args = { ... }
+		-- Middleware
+		local result = Shared.RunMiddleware(self._Middleware, args)
+		if result == Shared.MiddlewareDenyMarker then
+			return
+		end
+
+		-- Types
 
 		for i, checkFunc in expects do
 			local arg = args[i]
@@ -102,7 +121,8 @@ function ServerEvent.SetCallback(
 			end
 		end
 
-		callback(player, ...)
+		-- Actual callback
+		callback(player, table.unpack(args))
 	end
 
 	local robloxConn = self._Instance.OnServerEvent:Connect(function(...: any)
@@ -197,34 +217,9 @@ function ServerFunction.SetCallback(
 	self._Callback = function(player: Player, ...)
 		-- Middleware
 		local args = { ... }
-		for _, middleware in ipairs(self._Middleware) do
-			local deny = false
-
-			local success, errorMessage = pcall(function()
-				local result = middleware(Shared.MiddlewareDenyMarker, Shared.MiddlewareNextMarker, args)
-
-				if result == Shared.MiddlewareDenyMarker then
-					deny = true
-				elseif result == Shared.MiddlewareNextMarker then
-					deny = false
-				else
-					error("Invalid result")
-				end
-			end)
-
-			if not success then
-				deny = true
-				if Flags.IsEnabled(Flags.Flags.WarnOnMiddlewareError) then
-					warn("Failed to run middleware:", errorMessage)
-				else
-					error("Failed to run middleware:", errorMessage)
-				end
-			end
-
-			if deny then
-				error("Middleware denied request")
-				return Shared.MiddlewareDenyMarker
-			end
+		local result = Shared.RunMiddleware(self._Middleware, args)
+		if result == Shared.MiddlewareDenyMarker then
+			return
 		end
 
 		-- Type checks
