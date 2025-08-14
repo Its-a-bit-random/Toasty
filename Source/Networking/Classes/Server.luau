@@ -103,14 +103,8 @@ function ServerEvent.SetCallback(
 	self._CallbackSet = true
 	self._Callback = function(player: Player, ...: any)
 		local args = { ... }
-		-- Middleware
-		local result = Shared.RunMiddleware(self._Middleware, args)
-		if result == Shared.MiddlewareDenyMarker then
-			return
-		end
 
 		-- Types
-
 		for i, checkFunc in expects do
 			local arg = args[i]
 			local success, errorMessage = checkFunc(arg)
@@ -119,6 +113,12 @@ function ServerEvent.SetCallback(
 				warn("Failed type check: Check func returned false:", errorMessage)
 				error("Unprocessed")
 			end
+		end
+
+		-- Middleware
+		local result = Shared.RunMiddleware(self._Middleware, args)
+		if result == Shared.MiddlewareDenyMarker then
+			return
 		end
 
 		-- Actual callback
@@ -215,12 +215,7 @@ function ServerFunction.SetCallback(
 
 	self._CallbackSet = true
 	self._Callback = function(player: Player, ...)
-		-- Middleware
 		local args = { ... }
-		local result = Shared.RunMiddleware(self._Middleware, args)
-		if result == Shared.MiddlewareDenyMarker then
-			return
-		end
 
 		-- Type checks
 		for i, checkFunc in expects do
@@ -230,6 +225,12 @@ function ServerFunction.SetCallback(
 			if not success then
 				error("Failed type check: Check func returned false:", errorMessage)
 			end
+		end
+
+		-- Middleware
+		local result = Shared.RunMiddleware(self._Middleware, args)
+		if result == Shared.MiddlewareDenyMarker then
+			return
 		end
 
 		-- Actual callback
