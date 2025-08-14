@@ -33,6 +33,7 @@ function ClientEvent.new(instance: RemoteEvent)
 	local self = setmetatable({}, ClientEvent)
 	self._CallbackSet = false
 	self._Instance = instance
+	self._Middleware = {}
 	return self :: ClientEvent
 end
 

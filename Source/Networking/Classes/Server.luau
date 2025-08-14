@@ -37,6 +37,7 @@ function ServerEvent.new(instance: RemoteEvent)
 	local self = setmetatable({}, ServerEvent)
 	self._CallbackSet = false
 	self._Instance = instance
+	self._Middleware = {}
 	return self :: ServerEvent
 end
 
