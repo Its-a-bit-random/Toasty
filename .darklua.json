@@ -1,0 +1,26 @@
+{
+	"generator": "retain_lines",
+	"rules": [
+		{
+			"rule": "convert_require",
+			"current": {
+				"name": "path",
+				"module_folder_name": "init",
+				"sources": {
+					"@Toasty": "Source/",
+					"@core": "Source/Core",
+					"@Networking": "Source/Networking"
+				}
+			},
+			"target": {
+				"name": "roblox",
+				"rojo_sourcemap": "sourcemap.json",
+				"indexing_style": "find_first_child"
+			}
+		},
+		{
+			"rule": "append_text_comment",
+			"file": "LICENSE"
+		}
+	]
+}

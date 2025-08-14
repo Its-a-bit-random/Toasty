@@ -1,7 +1,5 @@
-local Core = script.Parent
-local Types = require(Core.Types)
-
-local Lifecycle = require(Core.Lifecycle)
+local Types = require("@core/Types")
+local Lifecycle = require("@core/Lifecycle")
 
 local function DefaultHandler(singletons: { Types.Singleton }, name: string, ...: any)
 	local args = { ... }

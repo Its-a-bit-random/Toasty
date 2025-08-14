@@ -1,12 +1,9 @@
-local Core = script.Parent
-local Types = require(Core.Types)
-local Flags = require(Core.Parent.Flags)
-
-local SingletonManagerModule = require(Core.SingletonManager)
-local GetAll = SingletonManagerModule.GetAll
+local Types = require("@core/Types")
+local Flags = require("@Toasty/Flags")
+local SingletonManager = require("@core/SingletonManager")
 
 local function GetSingletonsWhichImplement(lifecycle: string)
-	local singletons = GetAll()
+	local singletons = SingletonManager.GetAll()
 	local singletonsWhichImplement = {}
 
 	for _, v in singletons do

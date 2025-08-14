@@ -1,7 +1,7 @@
-local Shared = require(script.Parent.Parent.Shared)
+local Shared = require("@Networking/Shared")
 local Promise = require(script.Parent.Parent.Parent.Parent.Promise)
-local Connection = require(script.Parent.Connection)
-local Types = require(script.Parent.Parent.Parent.Core.Types)
+local Connection = require("./Connection")
+local Types = require("@Core/Types")
 
 --[=[
 	@class ClientEvent

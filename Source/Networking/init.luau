@@ -1,12 +1,12 @@
 local RunService = game:GetService("RunService")
 
-local Shared = require(script.Shared)
-local InstanceManager = require(script.InstanceManager)
-local Util = require(script.Parent.Util)
-local Flags = require(script.Parent.Flags)
+local Shared = require("@Networking/Shared")
+local InstanceManager = require("@Networking/InstanceManager")
+local Util = require("@Toasty/Util")
+local Flags = require("@Toasty/Flags")
 
-local ServerClasses = require(script.Classes.Server)
-local ClientClasses = require(script.Classes.Client)
+local ServerClasses = require("@Networking/Classes/Server")
+local ClientClasses = require("@Networking/Classes/Client")
 
 --[=[
 	@class Networking
@@ -205,5 +205,5 @@ return {
 	SetupFromModule = SetupFromModule,
 	Setup = Setup,
 
-	Arg = require(script.Arg),
+	Arg = require("@Networking/Arg"),
 }

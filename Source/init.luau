@@ -1,5 +1,5 @@
-local SingletonManager = require(script.Core.SingletonManager)
-local LifecycleManager = require(script.Core.LifecycleManager)
+local SingletonManager = require("@core/SingletonManager")
+local LifecycleManager = require("@core/LifecycleManager")
 
 --[=[
 	@class Toasty

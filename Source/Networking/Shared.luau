@@ -1,7 +1,6 @@
-local Toasty = script.Parent.Parent
-local Types = require(script.Parent.Parent.Core.Types)
-local Flags = require(script.Parent.Parent.Flags)
-local Util = require(Toasty.Util)
+local Types = require("@Core/Types")
+local Flags = require("@Toasty/Flags")
+local Util = require("@Toasty/Util")
 
 --[=[
 	@type TypeCheckFunc (...any) -> (boolean, string?)

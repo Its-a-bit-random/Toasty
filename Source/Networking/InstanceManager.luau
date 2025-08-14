@@ -1,8 +1,8 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local RunService = game:GetService("RunService")
 
-local Flags = require(script.Parent.Parent.Flags)
-local Util = require(script.Parent.Parent.Util)
+local Flags = require("@Toasty/Flags")
+local Util = require("@Toasty/Util")
 
 local RemotesFolder: Folder
 

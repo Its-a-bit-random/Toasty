@@ -1,5 +1,5 @@
 return {
-	Marker = require(script.Marker).new,
-	Table = require(script.Table),
-	Attribute = require(script.FindByAttribute),
+	Marker = require("@self/Marker").new,
+	Table = require("@self/Table"),
+	Attribute = require("@self/FindByAttribute"),
 }
