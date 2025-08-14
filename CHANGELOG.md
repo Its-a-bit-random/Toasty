@@ -2,10 +2,12 @@
 
 ## Unreleased
 
+* Added middleware to networking ([#8])
 * Added `LoadOrder` option to singletons ([#7])
 * Fixed `.rbxm` workflow to have types in packages
 * Fixed docs spelling
 
+[#8]: https://github.com/Its-a-bit-random/Toasty/pull/8
 [#7]: https://github.com/Its-a-bit-random/Toasty/pull/7
 
 ## 1.0.0
