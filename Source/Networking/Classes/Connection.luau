@@ -10,7 +10,7 @@ export type Connection = {
 	Disconnect: (self: Connection) -> (),
 
 	_RbxConn: RBXScriptConnection,
-	_Disconnectd: Signal.Signal<>,
+	_Disconnected: Signal.Signal<>,
 }
 
 --[=[
@@ -21,7 +21,7 @@ export type Connection = {
 function Connection.new(conn: RBXScriptConnection)
 	local self = setmetatable({}, Connection)
 	self._RbxConn = conn
-	self._Disconnectd = Signal.new()
+	self._Disconnected = Signal.new()
 	return self :: Connection
 end
 
@@ -31,7 +31,7 @@ end
 ]=]
 function Connection.Disconnect(self: Connection)
 	self._RbxConn:Disconnect()
-	self._Disconnectd:Fire()
+	self._Disconnected:Fire()
 end
 
 return {

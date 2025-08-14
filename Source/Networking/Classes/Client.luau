@@ -1,15 +1,16 @@
 local Shared = require(script.Parent.Parent.Shared)
 local Promise = require(script.Parent.Parent.Parent.Parent.Promise)
 local Connection = require(script.Parent.Connection)
+local Types = require(script.Parent.Parent.Parent.Core.Types)
 
 --[=[
 	@class ClientEvent
 ]=]
 local ClientEvent = {}
 ClientEvent.__index = ClientEvent
-
 export type ClientEvent = {
 	Fire: (self: ClientEvent, ...any) -> (),
+	AddMiddleware: (self: ClientEvent, fn: Types.MiddlewareFn) -> (),
 	SetCallback: (
 		self: ClientEvent,
 		expects: { Shared.TypeCheckFunc },
@@ -19,6 +20,7 @@ export type ClientEvent = {
 	_Instance: RemoteEvent,
 	_CallbackSet: boolean,
 	_Callback: (...any) -> ()?,
+	_Middleware: { Types.MiddlewareFn },
 }
 
 --[=[
@@ -31,6 +33,7 @@ function ClientEvent.new(instance: RemoteEvent)
 	local self = setmetatable({}, ClientEvent)
 	self._CallbackSet = false
 	self._Instance = instance
+	self._Middleware = {}
 	return self :: ClientEvent
 end
 
@@ -43,6 +46,18 @@ end
 ]=]
 function ClientEvent.Fire(self: ClientEvent, ...: any)
 	self._Instance:FireServer(...)
+end
+
+--[=[
+	@since v1.1.0
+	@method AddMiddleware
+	@param fn MiddlewareFn
+	@within ClientEvent
+
+	Add a middleware function to run after the event is fired
+]=]
+function ClientEvent.AddMiddleware(self: ClientEvent, fn: Types.MiddlewareFn)
+	table.insert(self._Middleware, fn)
 end
 
 --[=[
@@ -67,6 +82,7 @@ function ClientEvent.SetCallback(
 	self._Callback = function(...: any)
 		local args = { ... }
 
+		-- Types
 		for i, checkFunc in expects do
 			local arg = args[i]
 			local success, errorMessage = checkFunc(arg)
@@ -77,7 +93,14 @@ function ClientEvent.SetCallback(
 			end
 		end
 
-		callback(...)
+		-- Middleware
+		local result = Shared.RunMiddleware(self._Middleware, args)
+		if result == Shared.MiddlewareDenyMarker then
+			return
+		end
+
+		-- Actual callback
+		callback(table.unpack(args))
 	end
 
 	local robloxConn = self._Instance.OnClientEvent:Connect(function(...)
@@ -86,7 +109,7 @@ function ClientEvent.SetCallback(
 
 	local wrapped = Connection.Connection(robloxConn)
 
-	wrapped._Disconnectd:Connect(function()
+	wrapped._Disconnected:Connect(function()
 		self._CallbackSet = false
 		self._Callback = nil
 	end)

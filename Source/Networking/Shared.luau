@@ -1,4 +1,6 @@
 local Toasty = script.Parent.Parent
+local Types = require(script.Parent.Parent.Core.Types)
+local Flags = require(script.Parent.Parent.Flags)
 local Util = require(Toasty.Util)
 
 --[=[
@@ -34,6 +36,49 @@ local function GenerateRequestID()
 	return timePart .. randPart
 end
 
+local MiddlewareNextMarker = Util.Marker()
+local MiddlewareDenyMarker = Util.Marker()
+
+--[=[
+	@ignore
+	@within Networking
+
+	Runs the passed middleware functions
+]=]
+local function RunMiddleware(middleware: { Types.MiddlewareFn }, args: { any })
+	for _, fn in ipairs(middleware) do
+		local deny = false
+
+		local success, errorMessage = pcall(function()
+			local result = fn(MiddlewareDenyMarker, MiddlewareNextMarker, args)
+
+			if result == MiddlewareDenyMarker then
+				deny = true
+			elseif result == MiddlewareNextMarker then
+				deny = false
+			else
+				error("Invalid result")
+			end
+		end)
+
+		if not success then
+			deny = true
+			if Flags.IsEnabled(Flags.Flags.WarnOnMiddlewareError) then
+				warn("Failed to run middleware:", errorMessage)
+			else
+				error("Failed to run middleware:", errorMessage)
+			end
+		end
+
+		if deny then
+			error("Middleware denied request")
+			return MiddlewareDenyMarker
+		end
+	end
+
+	return MiddlewareNextMarker
+end
+
 return {
 	EventMarker = Util.Marker(),
 	UnreliableEventMarker = Util.Marker(),
@@ -41,5 +86,9 @@ return {
 	FunctionMarker = Util.Marker(),
 	UnreliableFunctionMarker = Util.Marker(),
 
+	MiddlewareNextMarker = MiddlewareNextMarker,
+	MiddlewareDenyMarker = MiddlewareDenyMarker,
+
 	GenerateRequestID = GenerateRequestID,
+	RunMiddleware = RunMiddleware,
 }

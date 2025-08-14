@@ -1,5 +1,6 @@
 local Players = game:GetService("Players")
 
+local Types = require(script.Parent.Parent.Parent.Core.Types)
 local Shared = require(script.Parent.Parent.Shared)
 local Connection = require(script.Parent.Connection)
 
@@ -13,6 +14,7 @@ export type ServerEvent = {
 	Fire: (self: ServerEvent, player: Player, ...any) -> (),
 	FirePlayers: (self: ServerEvent, players: { Player }, ...any) -> (),
 	Broadcast: (self: ServerEvent, ...any) -> (),
+	AddMiddleware: (self: ServerEvent, fn: Types.MiddlewareFn) -> (),
 	SetCallback: (
 		self: ServerEvent,
 		expects: { Shared.TypeCheckFunc },
@@ -22,6 +24,7 @@ export type ServerEvent = {
 	_Instance: RemoteEvent,
 	_CallbackSet: boolean,
 	_Callback: (...any) -> ()?,
+	_Middleware: { Types.MiddlewareFn },
 }
 
 --[=[
@@ -34,6 +37,7 @@ function ServerEvent.new(instance: RemoteEvent)
 	local self = setmetatable({}, ServerEvent)
 	self._CallbackSet = false
 	self._Instance = instance
+	self._Middleware = {}
 	return self :: ServerEvent
 end
 
@@ -69,6 +73,18 @@ function ServerEvent.Broadcast(self: ServerEvent, ...: any)
 end
 
 --[=[
+	@since v1.1.0
+	@method AddMiddleware
+	@param fn MiddlewareFn
+	@within ServerEvent
+
+	Adds a new middleware function to run when the event is fired
+]=]
+function ServerEvent.AddMiddleware(self: ServerEvent, fn: Types.MiddlewareFn)
+	table.insert(self._Middleware, fn)
+end
+
+--[=[
 	@method SetCallback
 	@param expects {TypeCheckFunc} -- What is expected from the client
 	@param callback (player: Player, ...any) -> ()
@@ -90,6 +106,7 @@ function ServerEvent.SetCallback(
 	self._Callback = function(player: Player, ...: any)
 		local args = { ... }
 
+		-- Types
 		for i, checkFunc in expects do
 			local arg = args[i]
 			local success, errorMessage = checkFunc(arg)
@@ -100,7 +117,14 @@ function ServerEvent.SetCallback(
 			end
 		end
 
-		callback(player, ...)
+		-- Middleware
+		local result = Shared.RunMiddleware(self._Middleware, args)
+		if result == Shared.MiddlewareDenyMarker then
+			return
+		end
+
+		-- Actual callback
+		callback(player, table.unpack(args))
 	end
 
 	local robloxConn = self._Instance.OnServerEvent:Connect(function(...: any)
@@ -109,7 +133,7 @@ function ServerEvent.SetCallback(
 
 	local wrapped = Connection.Connection(robloxConn)
 
-	wrapped._Disconnectd:Connect(function()
+	wrapped._Disconnected:Connect(function()
 		self._CallbackSet = false
 		self._Callback = nil
 	end)
@@ -146,6 +170,7 @@ export type ServerFunction = {
 	FirePlayers: (self: ServerFunction, players: { Player }, ...any) -> (),
 	Broadcast: (self: ServerFunction, ...any) -> (),
 	Predict: (self: ServerFunction, player: Player, ...any) -> (),
+	AddMiddleware: (self: ServerFunction, fn: Types.MiddlewareFn) -> (),
 	SetCallback: (
 		self: ServerFunction,
 		expects: { Shared.TypeCheckFunc },
@@ -154,6 +179,7 @@ export type ServerFunction = {
 	_Instance: RemoteEvent,
 	_CallbackSet: boolean,
 	_Callback: (...any) -> ()?,
+	_Middleware: { Types.MiddlewareFn },
 }
 
 --[=[
@@ -166,6 +192,7 @@ function ServerFunction.new(instance: RemoteEvent)
 	local self = setmetatable({}, ServerFunction)
 	self._Instance = instance
 	self._CallbackSet = false
+	self._Middleware = {}
 	return self :: ServerFunction
 end
 
@@ -192,6 +219,7 @@ function ServerFunction.SetCallback(
 	self._Callback = function(player: Player, ...)
 		local args = { ... }
 
+		-- Type checks
 		for i, checkFunc in expects do
 			local arg = args[i]
 			local success, errorMessage = checkFunc(arg)
@@ -201,7 +229,14 @@ function ServerFunction.SetCallback(
 			end
 		end
 
-		return callback(player, ...)
+		-- Middleware
+		local result = Shared.RunMiddleware(self._Middleware, args)
+		if result == Shared.MiddlewareDenyMarker then
+			return
+		end
+
+		-- Actual callback
+		return callback(player, table.unpack(args))
 	end
 
 	local robloxConn = self._Instance.OnServerEvent:Connect(function(player, id, ...)
@@ -214,12 +249,24 @@ function ServerFunction.SetCallback(
 
 	local wrapped = Connection.Connection(robloxConn)
 
-	wrapped._Disconnectd:Once(function()
+	wrapped._Disconnected:Once(function()
 		self._CallbackSet = false
 		self._Callback = nil
 	end)
 
 	return wrapped
+end
+
+--[=[
+	@since v1.1.0
+	@method AddMiddleware
+	@param fn MiddlewareFn
+	@within ServerFunction
+
+	Adds a new middleware function to run when the function is fired
+]=]
+function ServerFunction.AddMiddleware(self: ServerFunction, fn: Types.MiddlewareFn)
+	table.insert(self._Middleware, fn)
 end
 
 --[=[

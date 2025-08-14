@@ -42,32 +42,19 @@ export type Lifecycle = {
 	_OnDispatch: LifecycleHandler,
 }
 
-export type ServerEventReceiver = {
-	Name: string,
-	Unreliable: boolean,
+--[=[
+	@type Marker {}
+	@within Types
+]=]
+export type Marker = {}
 
-	SetCallback: (self: ServerEventReceiver, callback: (player: Player, ...any) -> ()) -> (),
-}
-
-export type ServerEventSender = {
-	Name: string,
-	Unreliable: boolean,
-
-	Fire: (self: ServerEventSender, player: Player, ...any) -> (),
-	FirePlayers: (self: ServerEventSender, players: { Player }, ...any) -> (),
-	Broadcast: (self: ServerEventSender, ...any) -> (),
-}
-
-export type ClientEventReceiver = {
-	Name: string,
-
-	SetCallback: (self: ServerEventReceiver, callback: (player: Player, ...any) -> ()) -> (),
-}
-
-export type ClientEventSender = {
-	Name: string,
-
-	Fire: (self: ServerEventSender, ...any) -> (),
-}
+--[=[
+	@since v1.1.0
+	@type MiddlewareFn (deny: Marker, next: Marker, args: {[number]: any}) -> Marker
+	@within Types
+	The Args table is the Args that are passed to the event callback. Any modifications to these
+	are retained to the next middleware and eventually to the callback.
+]=]
+export type MiddlewareFn = (deny: Marker, next: Marker, { [number]: any }) -> Marker
 
 return nil
