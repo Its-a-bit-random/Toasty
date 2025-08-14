@@ -80,12 +80,6 @@ function ClientEvent.SetCallback(
 	self._Callback = function(...: any)
 		local args = { ... }
 
-		-- Middleware
-		local result = Shared.RunMiddleware(self._Middleware, args)
-		if result == Shared.MiddlewareDenyMarker then
-			return
-		end
-
 		-- Types
 		for i, checkFunc in expects do
 			local arg = args[i]
@@ -95,6 +89,12 @@ function ClientEvent.SetCallback(
 				warn("Failed type check: Check func returned false:", errorMessage)
 				error("Unprocessed")
 			end
+		end
+
+		-- Middleware
+		local result = Shared.RunMiddleware(self._Middleware, args)
+		if result == Shared.MiddlewareDenyMarker then
+			return
 		end
 
 		-- Actual callback
