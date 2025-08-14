@@ -1,6 +1,6 @@
 # Toasty Changelog
 
-## Unreleased
+## 1.1.0
 
 * Added middleware to networking ([#8])
 * Added `LoadOrder` option to singletons ([#7])

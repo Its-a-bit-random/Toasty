@@ -9,7 +9,7 @@ dependencies = []
 
 [[package]]
 name = "its-a-bit-random/toasty"
-version = "1.0.0"
+version = "1.1.0"
 dependencies = [["Promise", "lukadev-0/typed-promise@4.0.2"], ["Signal", "sleitnick/signal@2.0.3"]]
 
 [[package]]
