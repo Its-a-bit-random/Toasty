@@ -3,6 +3,7 @@ local Players = game:GetService("Players")
 local Types = require(script.Parent.Parent.Parent.Core.Types)
 local Shared = require(script.Parent.Parent.Shared)
 local Connection = require(script.Parent.Connection)
+local Flags = require(script.Parent.Parent.Parent.Flags)
 
 --[=[
 	@class ServerEvent
@@ -213,7 +214,11 @@ function ServerFunction.SetCallback(
 
 			if not success then
 				deny = true
-				warn("Failed to run middleware:", errorMessage)
+				if Flags.IsEnabled(Flags.Flags.WarnOnMiddlewareError) then
+					warn("Failed to run middleware:", errorMessage)
+				else
+					error("Failed to run middleware:", errorMessage)
+				end
 			end
 
 			if deny then

@@ -21,3 +21,11 @@ When toasty creates your networking instances, they by default get put into fold
 :::tip
 With this enabled events with the same name can still exist.
 :::
+
+## `Toasty.Flags.Flags.WarnOnMiddlewareError`
+
+:::tip
+Enabled by default in studio
+:::
+
+When a middleware function errors, should Toasty actually let it error or should it warn instead.

@@ -1,3 +1,4 @@
+local RunService = game:GetService("RunService")
 --[=[
 	@class Flags
 	Flags are a way of turning on or off Developer or Experimental features of Toasty.
@@ -10,19 +11,22 @@
 ]=]
 
 --[=[
-	@interface Flags
+	@interface PossibleFlags
 	.Verbose Flag
+	.FlatNetworkStructure Flag
+	.WarnOnMiddlewareError Flag
 	@within Flags
 ]=]
 
 --[=[
-	@prop Flags Flags
+	@prop Flags PossibleFlags
 	@readonly
 	@within Flags
 ]=]
 local Flags = {
 	["Verbose"] = "Verbose",
 	["FlatNetworkStructure"] = "FlatNetworkStructure",
+	["WarnOnMiddlewareError"] = "WarnOnMiddlewareError",
 }
 table.freeze(Flags)
 
@@ -59,6 +63,12 @@ end
 local function IsEnabled(flag: string)
 	local key = CreateGlobalKey(flag)
 	return _G[key] == true
+end
+
+-- DEFAULT FLAGS --
+
+if RunService:IsStudio() then
+	Enable(Flags.WarnOnMiddlewareError)
 end
 
 return {
