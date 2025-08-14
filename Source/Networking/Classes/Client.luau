@@ -1,15 +1,16 @@
 local Shared = require(script.Parent.Parent.Shared)
 local Promise = require(script.Parent.Parent.Parent.Parent.Promise)
 local Connection = require(script.Parent.Connection)
+local Types = require(script.Parent.Parent.Parent.Core.Types)
 
 --[=[
 	@class ClientEvent
 ]=]
 local ClientEvent = {}
 ClientEvent.__index = ClientEvent
-
 export type ClientEvent = {
 	Fire: (self: ClientEvent, ...any) -> (),
+	AddMiddleware: (self: ClientEvent, fn: Types.MiddlewareFn) -> (),
 	SetCallback: (
 		self: ClientEvent,
 		expects: { Shared.TypeCheckFunc },
@@ -19,6 +20,7 @@ export type ClientEvent = {
 	_Instance: RemoteEvent,
 	_CallbackSet: boolean,
 	_Callback: (...any) -> ()?,
+	_Middleware: { Types.MiddlewareFn },
 }
 
 --[=[
@@ -46,6 +48,17 @@ function ClientEvent.Fire(self: ClientEvent, ...: any)
 end
 
 --[=[
+	@method AddMiddleware
+	@param fn MiddlewareFn
+	@within ClientEvent
+
+	Add a middleware function to run after the event is fired
+]=]
+function ClientEvent.AddMiddleware(self: ClientEvent, fn: Types.MiddlewareFn)
+	table.insert(self._Middleware, fn)
+end
+
+--[=[
 	@method SetCallback
 	@param expects {TypeCheckFunc} -- What is expected from the server
 	@param callback (...any) -> ()
@@ -67,6 +80,13 @@ function ClientEvent.SetCallback(
 	self._Callback = function(...: any)
 		local args = { ... }
 
+		-- Middleware
+		local result = Shared.RunMiddleware(self._Middleware, args)
+		if result == Shared.MiddlewareDenyMarker then
+			return
+		end
+
+		-- Types
 		for i, checkFunc in expects do
 			local arg = args[i]
 			local success, errorMessage = checkFunc(arg)
@@ -77,7 +97,8 @@ function ClientEvent.SetCallback(
 			end
 		end
 
-		callback(...)
+		-- Actual callback
+		callback(table.unpack(args))
 	end
 
 	local robloxConn = self._Instance.OnClientEvent:Connect(function(...)
