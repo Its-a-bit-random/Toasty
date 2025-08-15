@@ -18,7 +18,7 @@ jobs:
         run: |
           wally install
           darklua process Source/ Toasty/
-          rojo sourcemap serve.project.json -o sourcemap.json
+          rojo sourcemap sourcemap.project.json -o sourcemap.json
           wally-package-types --sourcemap sourcemap.json Packages/
       - name: Build model file
         run: |
