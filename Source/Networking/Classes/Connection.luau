@@ -1,4 +1,4 @@
-local Signal = require(script.Parent.Parent.Parent.Parent.Signal)
+local Signal = require("@Packages/Signal")
 
 --[=[
 	@class Connection

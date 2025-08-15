@@ -17,13 +17,13 @@ jobs:
       - name: Wally install
         run: |
           wally install
-          darklua process Source/ Toasty/
           rojo sourcemap sourcemap.project.json -o sourcemap.json
           wally-package-types --sourcemap sourcemap.json Packages/
+          darklua process Source/ Toasty/
       - name: Build model file
         run: |
           rojo build publish.project.json -o Toasty.rbxm
-      - name: Release
+      - name: Release ${{ github.ref }}
         uses: softprops/action-gh-release@v1
         with:
           name: Release

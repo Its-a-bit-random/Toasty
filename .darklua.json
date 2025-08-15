@@ -9,7 +9,8 @@
 				"sources": {
 					"@Toasty": "Source/",
 					"@core": "Source/Core",
-					"@Networking": "Source/Networking"
+					"@Networking": "Source/Networking",
+					"@Packages": "Packages/"
 				}
 			},
 			"target": {

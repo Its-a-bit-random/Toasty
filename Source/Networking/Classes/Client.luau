@@ -1,5 +1,5 @@
 local Shared = require("@Networking/Shared")
-local Promise = require(script.Parent.Parent.Parent.Parent.Promise)
+local Promise = require("@Packages/Promise")
 local Connection = require("./Connection")
 local Types = require("@Core/Types")
 
