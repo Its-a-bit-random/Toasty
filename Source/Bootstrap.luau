@@ -62,6 +62,12 @@ local function Toast()
 		loadOrderedSingletons[singleton.LoadOrder] = tbl
 	end
 
+	if loadOrderedSingletons[1] == nil then
+		local tbl = {}
+		table.insert(tbl, table.remove(loadOrderedSingletons[2]))
+		loadOrderedSingletons[1] = tbl
+	end
+
 	local sortedSingletons = {}
 	for loadOrder, singletons in loadOrderedSingletons do
 		local sorted = Util.Table.TopologicalSort(singletons, "Dependencies")
