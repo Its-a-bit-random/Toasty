@@ -32,6 +32,6 @@ Make sure to sync your Packages folder with Rojo and your ready to go.
 
 If you want to use Toasty directly in Roblox Studio without Rojo or Wally you must first install the latest `Toasty.rbxm` from [here](https://github.com/Its-a-bit-random/Toasty/releases/latest).
 
-Once tou have that downloaded drag and drop that file into studio and move the `Packages` folder into ReplicatedStorage.
+Once you have that downloaded, drag and drop that file into studio and move the `Packages` folder into ReplicatedStorage.
 
 This is the exact equivalent of doing the Wally install method but done for you and is intended to be used with non-rojo managed games.
