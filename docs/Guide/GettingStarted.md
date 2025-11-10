@@ -19,7 +19,7 @@ Toasty can be installed via 2 methods at the moment. Via Wally (package manager)
 Add the following to your `wally.toml` file:
 ```toml
 [dependencies]
-Toasty = "its-a-bit-random/toasty@1.1.0"
+Toasty = "its-a-bit-random/toasty@1.1.1"
 ```
 and run
 ```sh

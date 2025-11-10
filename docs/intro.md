@@ -13,7 +13,7 @@ Luau game framework inspired by `Flamework` for Roblox-TS.
 Add the following to your `wally.toml`
 
 ```toml
-Toasty = "its-a-bit-random/toasty@1.1.0"
+Toasty = "its-a-bit-random/toasty@1.1.1"
 ```
 
 and run

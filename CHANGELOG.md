@@ -1,5 +1,7 @@
 # Toasty Changelog
 
+* Fix singletons not starting if non have load order of "1"
+
 ## 1.1.0
 
 * Added middleware to networking ([#8])
